@@ -1,9 +1,42 @@
 \documentclass{article}
 
+\input{tep4165-preamble}
+
 \begin{document}
 
-\section{Problem 1}
+Notation
 
-x
+\begin{equation}
+	\partial_t = \frac{\partial}{\partial_t}
+\end{equation}
+
+\section{Task 1}
+
+The energy equation is
+
+\begin{equation}
+	\partial_t (\rho E) + \div{\rho H \u} = \div{\tau \cdot \u} + \div{(k\grad{T}}+ \rho \vec{f} \cdot \u
+\end{equation}
+
+If we assume that there is no mass flow, that is $\u = 0$, then all terms involving $\u$ will disappear. This leaves us with
+
+\begin{equation}
+	\partial_t (\rho E) = + \div{(k\grad{T}}
+\end{equation}
+
+Assuming a 1D system this transforms to
+
+\begin{equation}
+	\partial_t (\rho E) = + \partial_x{(k\partial_t{T}}
+\end{equation}
+
+As we have assumed that $\u=0$ there is no kinetic energy in the specific energy $E$, and we have $E = e$ where is the specific internal energy (internal energy per unit mass). The change in specific internal energy is related to the change in temperature by the specific heat capacity, $dd{e} = c_p \dd{T}$.
+
+Since $\u = 0$ then $\partial_t \rho = 0$ (or we could assume incompressible). If in addition we assume homogenous $k$ we get
+
+\begin{equation}
+	\rho\partial_t (E) = + \partial_x{(k\partial_t{T}}
+\end{equation}
+
 
 \end{document}
