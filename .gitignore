@@ -1,6 +1,6 @@
-.pdf
-.aux
-.log
-.csv
-.synctex.gz
-.png
+*.pdf
+*.aux
+*.log
+*.csv
+*.synctex.gz
+*.png
