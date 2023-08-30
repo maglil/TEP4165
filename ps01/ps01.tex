@@ -1,5 +1,5 @@
-\documentclass{article}
 
+\documentclass{article}
 \input{tep4165-preamble}
 
 \begin{document}
@@ -12,6 +12,7 @@ Notation
 
 \section{Task 1}
 
+\subsection{1a}
 The energy equation is
 
 \begin{equation}
@@ -25,7 +26,7 @@ If we assume that there is no mass flow, that is $\u = 0$, then all terms involv
 \end{equation}
 
 Assuming a 1D system this transforms to
-
+ta
 \begin{equation}
 	\partial_t (\rho E) = + \partial_x{(k\partial_t{T}}
 \end{equation}
@@ -38,5 +39,203 @@ Since $\u = 0$ then $\partial_t \rho = 0$ (or we could assume incompressible). I
 	\rho\partial_t (E) = + \partial_x{(k\partial_t{T}}
 \end{equation}
 
+\subsection{1b}
+Let [q] denote the dimensions of a quantity q. Assume $[L] = l$, $[U] = \frac{l}{t}$, $[\rho] = \frac{m}{l^3}$. Then,
+
+\begin{equation}
+[\vec{x}^*] = \frac{[x]}{[L]} = \frac{l}{l} = 1
+\end{equation}
+
+\begin{equation}
+[\vec{u}*] = \frac{[u]}{[U]} = \frac{l/t}{l/t} = 1 
+\end{equation}
+
+\begin{equation}
+[t^*] = \frac{[t]}{[L/U]} = \frac{s}{m} \frac{m}{s} = 1
+\end{equation}
+
+\begin{equation}
+[p^*] = \frac{p}{\rho U^2} = \frac{m l^{-1} s^{-1}}{m l^{-3} l^2s^{-1}} = 1
+\end{equation}
+
+Substituting for dimensional quantities in the incompressible Navier-Stokes equation
+
+\begin{equation}
+\frac{U}{L}\partial_{t^*} \vec{u^*} U + \vec{u^*} U \cdot \frac{1}{L}\nabla^* \vec{u^*} U = -\frac{1}{\rho} \frac{1}{L}\nabla^* p^* \rho U^2 + \nu \frac{1}{L^2}\vec{u}^*U
+\end{equation}
+
+Divide the whole equation by $\frac{U^2}{L}$ to yield (raname starred quantities as unstarred quantities)
+
+\begin{equation}
+\partial_t \vec{u} \nabla \vec{u} = -\nabla p + \frac{\nu }{UL} \nabla^2 \vec{v}
+\end{equation}
+
+Introduce the Reynolds number $Re = \frac{UL}{\nu}$ results in
+
+\begin{equation}
+\partial_t \vec{u} + (\vec{u}\cdot \nabla \vec{u}) = -\nabla p + \frac{1}{\Re} \nabla^2 \vec{v}
+\end{equation}
+
+\section{Task 2}
+
+The 1D heat equation is
+
+\begin{equation}
+\partial_t T = \alpha \partial_x^2 T
+\end{equation}
+
+We will assume that the solution can be written as the sum of the steady state solution $T_s$ and an unsteady part $T_t$.
+
+\begin{equation}
+T = T_s + T_t
+\end{equation}
+
+Plugging into the heat equation we get
+
+\begin{equation}
+\label{eq:heatparts}
+\partial_t (T_s + T_t) = \alpha \partial_x^2 (T_s + T_t)
+\end{equation}
+
+Since $T_s$ represents the steady state solution it must satisfy
+
+\begin{equation}
+\label{eq:laplace}
+\partial_x^2 T_s = 0
+\end{equation}
+
+while $T_s$ cancles from \ref{eq:heatparts} (left side since $T_s$ is independent of time and right side due to \ref{eq:laplace}) to give 
+
+\begin{equation}
+\label{eq:unsteady}
+\partial_t T_t = \alpha \partial_x^2 T_t
+\end{equation}
+
+To simplify expressions introduce new variables $T' = T-T_1$ and $x' = x-x_1$. We will solve the equations with these variables (we will however for additional simplicity skip writing the primes). The boundary conditions are then 
+
+\begin{align}
+T(0) &= 0 \\
+T(L) &= \Delta T
+\end{align}
+
+where $L = L_2-L_1$ and $\Delta T = T_2-T_1$ .
+
+The solution to \ref{eq:laplace} is $T_s = ax + b$. Boundary condition at $x = 0$ implies $b=0$ and at $x=L$ implies $ a= \Delta T/L$. Thus,
+
+\begin{equation}
+T_s = \frac{\Delta T}{L} x
+\end{equation}
+
+For \ref{eq:unsteady}  Assume we cand find a solution using separation of variables
+
+\begin{equation}
+T_t = f(t)g(x)
+\end{equation}
+
+Inserting into \ref{eq:unsteady} results in
+
+\begin{equation}
+g\partial_t f = \alpha f \partial_x^2 g
+\end{equation}
+
+Divide through by $fg$ we get
+
+\begin{equation}
+\frac{\partial_t f}{f} = \alpha \frac{\partial_x^2 g}{g} = -k^2
+\end{equation}
+
+where we have introduced the  separation constant $k^2$. Since left side depends on $t$ only and the right on $x$ only, each side must be constant.
+
+% Temporal part
+For the time dependent $f$ we have
+
+\begin{equation}
+\partial_t f= -k^2 f
+\end{equation}
+with solution
+
+\begin{equation}
+f = A \exp{-k^2 t}
+\end{equation}
+
+The spatially dependent equation is
+
+\begin{equation}
+\partial_x^2 g = -\frac{k^2}{\alpha}g = -a g
+\end{equation}
+
+A solution is
+
+\begin{equation}
+G = B\cos(ax) + C \sin(ax)
+\end{equation}
+
+Since $T_s$ satisfy the boundary conditions we must have $T_t(0) = T_t(L) =0$ for the complete solution to also satisfy the boundary conditions. $T_t(0)$ implies $C = 0$. For the other end we then get
+
+\begin{equation}
+B \sin(aL) = 0
+\end{equation}
+
+which implies $aL = \frac{k}{\alpha} L =  n\pi$ or
+
+\begin{equation}
+k_n = \frac{n\pi\alpha}{L}
+\end{equation} 
+
+The general solution is thus
+
+\begin{equation}
+g = \sum_n B_n \sin(\frac{n\pi x}{L}) = 0
+\end{equation}
+
+%Initial conditions
+
+At $t=0$ the $T$ must satisfy the inital condition $T = T_i$ (note this is really $T'_i = T_i - T_1$, we will make this substitution at the end). Thus we get
+
+\begin{equation}
+T_s + T_t(0) = T_s + A\sum_n B_n \sin(n\pi x/L) = T_i
+\end{equation}
+
+Rearranging and absorbing the factor $A$ into the $B_n$
+
+\begin{equation}
+\sum_n B_n \sin(n\pi x/L) = T_i -T_s = T_i - \frac{\Delta T}{L}x
+\end{equation}
+
+We can find the $B_n$ by Fourier's formule for a Fourier sine series.
+
+\begin{equation}
+B_n = \frac{2}{L} \int_0^L (T_i-\frac{\Delta T}{L}x) \sin(n\pi x /L) dx 
+\end{equation}
+
+For the first term in the integral we get
+
+\begin{align}
+\frac{2}{L} \int_0^L T_i \sin(n\pi x /L) dx  &= \frac{2 T_i}{L} (-\frac{L}{n\pi})[\cos(\frac{n\pi x}{L}) |_0^L \\ 
+&= \frac{2 T_i}{L} (-\frac{L}{n\pi}) (\cos(n\pi) - \cos(0)) \\
+&= \frac{2 T_i}{n\pi}((-1)^n - 1)
+\end{align}
+
+For the second term we get
+
+The integral is 0 for n even, and $-\frac{L}{n\pi}$ for n odd
+
+\begin{equation}
+	\sum (-1^(n)+1)
+\end{equation}
+
+
+
+
+Transform coordinates $x \rightarrow x - L_1$ and $L \rightarrow L_2 - L_1$ 
+
+\subsection{2b}
+
+A program for numerically solving the above equation was written in matlab and are listed below. The series in xx was truncated when the largest value at any point was less then the machine precision (This approach would require that the series is montonically decreasing. This has not been checked). A maximum of 200 terms were included. For $t0=0$ 200 terms were included while for all the other times less than 14 terms were included.
+
+\lstinputlisting[language=matlab]{ps01.m}
+\lstinputlisting[language=matlab]{Texact.m}
+
+\includegraphics{ps01-1.png}
 
 \end{document}
