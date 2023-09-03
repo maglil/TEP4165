@@ -2,60 +2,94 @@
 \documentclass{article}
 \input{tep4165-preamble}
 
+
 \begin{document}
 
-Notation
+\begin{center}
+{\Large
+TEP4165 2023 \\
+Øving 1 \\
+\normalsize
+Magnus Lilledahl
+}
+\end{center}
+
+\section*{Notation}
+
+I will use the following notation
 
 \begin{equation}
-	\partial_t = \frac{\partial}{\partial_t}
+	\partial_t = \frac{\partial}{\partial t}, \quad \partial_x = \frac{\partial}{\partial x}
 \end{equation}
 
-\section{Task 1}
+\section*{Task 1}
 
-\subsection{1a}
+\subsection*{a}
 The energy equation is
 
 \begin{equation}
-	\partial_t (\rho E) + \div{\rho H \u} = \div{\tau \cdot \u} + \div{(k\grad{T}}+ \rho \vec{f} \cdot \u
+	\partial_t (\rho E) + \div{(\rho H \u)} = \div{(\tau \cdot \u)} + \div{(k\grad{T}})+ \rho \vec{f} \cdot \u
 \end{equation}
 
-If we assume that there is no mass flow, that is $\u = 0$, then all terms involving $\u$ will disappear. This leaves us with
+We will make the following assumptions
+
+\begin{enumerate}[I]
+	\item Incompressible material $\implies \partial_t \rho = 0, \quad c_p = c_v$
+	\item No body forces, negligeble viscous forces.
+	\item Constant thermal conductivty and heat capacity
+	\item Velocities and velocity gradients are negligeble
+	\item One-dimensional
+\end{enumerate}
+
+From II, the first and last term on right hand side will disappear. From III all terms involving $\u$ will disappear. This leaves us with
 
 \begin{equation}
-	\partial_t (\rho E) = + \div{(k\grad{T}}
+	\partial_t (\rho E) = + \div{(k\grad{T} )}
 \end{equation}
 
-Assuming a 1D system this transforms to
-ta
+From V this transforms into
 \begin{equation}
-	\partial_t (\rho E) = + \partial_x{(k\partial_t{T}}
+	\partial_t (\rho E) = + \partial_x{(k\partial_x{T}})
 \end{equation}
 
-As we have assumed that $\u=0$ there is no kinetic energy in the specific energy $E$, and we have $E = e$ where is the specific internal energy (internal energy per unit mass). The change in specific internal energy is related to the change in temperature by the specific heat capacity, $dd{e} = c_p \dd{T}$.
+For the left hand side we get (the assumptions used are indicated over each equality)
 
-Since $\u = 0$ then $\partial_t \rho = 0$ (or we could assume incompressible). If in addition we assume homogenous $k$ we get
+\begin{align}
+	\partial_t(\rho E) &= \partial_t (\rho e + \frac{1}{2}u^2) \overset{\text{IV}}{=} \partial_t(\rho e) = \rho \partial_t e + e \partial_t \rho \\
+&\overset{\text{I}}{=}  \rho \partial_t e = \rho \partial_t c_v T \overset{\text{III}}{=} \rho c_v \partial T \overset{\text{I}}{=} \rho c_p \partial T
+\end{align}
+
+From III we have
 
 \begin{equation}
-	\rho\partial_t (E) = + \partial_x{(k\partial_t{T}}
+	\partial_x{(k\partial_x{T}}) = k \partial_x^2 T
 \end{equation}
 
-\subsection{1b}
-Let [q] denote the dimensions of a quantity q. Assume $[L] = l$, $[U] = \frac{l}{t}$, $[\rho] = \frac{m}{l^3}$. Then,
+Setting $\alpha = \frac{k}{\rho c_p}$ we thus get
 
 \begin{equation}
-[\vec{x}^*] = \frac{[x]}{[L]} = \frac{l}{l} = 1
+	\partial_t T = \alpha \partial_x^2 T
+\end{equation}
+
+
+
+\subsection*{b}
+Let [q] denote the dimensions of a quantity q. Let $L$, $M$, $T$ denote dimensions for length, mass and time, respectively (sorry for using same symbol for dimension length and characteristic length, hopefully clear from context.) Assume $[L] = L$, $[U] = \frac{L}{T}$, $[\rho] = \frac{M}{L^3}$. Then,
+
+\begin{equation}
+[\vec{x}^*] = \frac{[x]}{[L]} = \frac{L}{L} = 1
 \end{equation}
 
 \begin{equation}
-[\vec{u}*] = \frac{[u]}{[U]} = \frac{l/t}{l/t} = 1 
+[\vec{u}*] = \frac{[u]}{[U]} = \frac{L/T}{L/T} = 1 
 \end{equation}
 
 \begin{equation}
-[t^*] = \frac{[t]}{[L/U]} = \frac{s}{m} \frac{m}{s} = 1
+[t^*] = \frac{[t]}{[L/U]} = \frac{T}{ L / \frac{L}{T} } = 1
 \end{equation}
 
 \begin{equation}
-[p^*] = \frac{p}{\rho U^2} = \frac{m l^{-1} s^{-1}}{m l^{-3} l^2s^{-1}} = 1
+[p^*] = \frac{p}{\rho U^2} = \frac{M L^{-1} T^{-2}}{M L^{-3} \cdot L^2T^{-2}} = 1
 \end{equation}
 
 Substituting for dimensional quantities in the incompressible Navier-Stokes equation
@@ -64,20 +98,21 @@ Substituting for dimensional quantities in the incompressible Navier-Stokes equa
 \frac{U}{L}\partial_{t^*} \vec{u^*} U + \vec{u^*} U \cdot \frac{1}{L}\nabla^* \vec{u^*} U = -\frac{1}{\rho} \frac{1}{L}\nabla^* p^* \rho U^2 + \nu \frac{1}{L^2}\vec{u}^*U
 \end{equation}
 
-Divide the whole equation by $\frac{U^2}{L}$ to yield (raname starred quantities as unstarred quantities)
+Divide the whole equation by $\frac{U^2}{L}$ to yield (rename starred quantities as unstarred quantities)
 
 \begin{equation}
-\partial_t \vec{u} \nabla \vec{u} = -\nabla p + \frac{\nu }{UL} \nabla^2 \vec{v}
+\partial_t \vec{u} + \vec{u} \nabla \vec{u} = -\nabla p + \frac{\nu }{UL} \nabla^2 \vec{v}
 \end{equation}
 
 Introduce the Reynolds number $Re = \frac{UL}{\nu}$ results in
 
 \begin{equation}
-\partial_t \vec{u} + (\vec{u}\cdot \nabla \vec{u}) = -\nabla p + \frac{1}{\Re} \nabla^2 \vec{v}
+\partial_t \vec{u} + \vec{u}\cdot \nabla \vec{u}= -\nabla p + \frac{1}{\Re} \nabla^2 \vec{v}
 \end{equation}
 
-\section{Task 2}
+\section*{Task 2}
 
+\subsection*{a}
 The 1D heat equation is
 
 \begin{equation}
@@ -111,7 +146,7 @@ while $T_s$ cancles from \ref{eq:heatparts} (left side since $T_s$ is independen
 \partial_t T_t = \alpha \partial_x^2 T_t
 \end{equation}
 
-To simplify expressions introduce new variables $T' = T-T_1$ and $x' = x-x_1$. We will solve the equations with these variables (we will however for additional simplicity skip writing the primes). The boundary conditions are then 
+To simplify expressions introduce new variables $T' = T-T_1$ and $x' = x-L_1$. We will solve the equations with these variables (we will however for additional simplicity skip writing the primes). The boundary conditions are then 
 
 \begin{align}
 T(0) &= 0 \\
@@ -161,36 +196,36 @@ f = A \exp{-k^2 t}
 The spatially dependent equation is
 
 \begin{equation}
-\partial_x^2 g = -\frac{k^2}{\alpha}g = -a g
+\partial_x^2 g = -\frac{k^2}{\alpha}g = -a^2 g
 \end{equation}
 
-A solution is
+with $k^2 = a^2 \alpha$ A solution is
 
 \begin{equation}
-G = B\cos(ax) + C \sin(ax)
+g = B\cos(ax) + C \sin(ax)
 \end{equation}
 
-Since $T_s$ satisfy the boundary conditions we must have $T_t(0) = T_t(L) =0$ for the complete solution to also satisfy the boundary conditions. $T_t(0)$ implies $C = 0$. For the other end we then get
+Since $T_s$ satisfy the boundary conditions we must have $T_t(0) = T_t(L) =0$ for the complete solution to also satisfy the boundary conditions. $T_t(0) =0$ implies $C = 0$. For the other end we then get
 
 \begin{equation}
 B \sin(aL) = 0
 \end{equation}
 
-which implies $aL = \frac{k}{\alpha} L =  n\pi$ or
+which implies $a  = \frac{ n\pi}{L}$ and
 
 \begin{equation}
-k_n = \frac{n\pi\alpha}{L}
+k_n^2 = \frac{n^2\pi^2}{L^2}\alpha
 \end{equation} 
 
 The general solution is thus
 
 \begin{equation}
-g = \sum_n B_n \sin(\frac{n\pi x}{L}) = 0
+g = \sum_n B_n \sin(\frac{n\pi x}{L}) 
 \end{equation}
 
 %Initial conditions
 
-At $t=0$ the $T$ must satisfy the inital condition $T = T_i$ (note this is really $T'_i = T_i - T_1$, we will make this substitution at the end). Thus we get
+At $t=0$, $T$ must satisfy the inital condition $T = T_i$ (note this is really $T'_i = T_i - T_1$, we will make the substitution at the end). Thus we get
 
 \begin{equation}
 T_s + T_t(0) = T_s + A\sum_n B_n \sin(n\pi x/L) = T_i
@@ -211,27 +246,46 @@ B_n = \frac{2}{L} \int_0^L (T_i-\frac{\Delta T}{L}x) \sin(n\pi x /L) dx
 For the first term in the integral we get
 
 \begin{align}
-\frac{2}{L} \int_0^L T_i \sin(n\pi x /L) dx  &= \frac{2 T_i}{L} (-\frac{L}{n\pi})[\cos(\frac{n\pi x}{L}) |_0^L \\ 
+\frac{2}{L} \int_0^L T_i \sin(n\pi x /L) dx  &= \frac{2 T_i}{L} (-\frac{L}{n\pi})\left[\cos(\frac{n\pi x}{L}) \right]_0^L \\ 
 &= \frac{2 T_i}{L} (-\frac{L}{n\pi}) (\cos(n\pi) - \cos(0)) \\
-&= \frac{2 T_i}{n\pi}((-1)^n - 1)
+&= - \frac{2 T_i}{n\pi}((-1)^n - 1)
 \end{align}
 
 For the second term we get
 
-The integral is 0 for n even, and $-\frac{L}{n\pi}$ for n odd
+\begin{align}
+	& -\frac{2\Delta T}{L^2} \int_0^L T_i x\sin(n\pi x /L) dx  \\
+& = -\frac{2\Delta T}{L^2} \left[-x \cos(\frac{n\pi x}{L})\frac{L}{n\pi} + \sin(\frac{n\pi x}{L})\left(\frac{L}{n\pi}\right)^2\right]_0^L \\
+&= \frac{2\Delta T}{Ln\pi} (L\cos( n \pi) + 0) \\
+&= \frac{2\Delta T}{n\pi} (\cos( n \pi) \\
+& = \frac{2\Delta T}{n\pi} (-1)^n
+\end{align}
+
+Combining both terms we get
 
 \begin{equation}
-	\sum (-1^(n)+1)
+	B_n = \frac{2}{n\pi} \left((\Delta T-T_i)(-1)^n + T_i \right)
 \end{equation}
 
+We can now make the subsitution $\Delta T = T_2 - T_1$ and $T_i \rightarrow T_i -T_1$ yielding
+
+\begin{equation}
+	B_n = \frac{2}{n\pi} \left((T_2 - T_i)(-1)^n - (T_1-T_i) \right)
+\end{equation}
+
+Thus we get for the final solution (making subsitutions $L = L_2-L_1$, $x' = x -L_1$, $k_n = \frac{n\pi\alpha}{L_2-L_1}$  )
+
+\begin{align}
+\label{eq:final}
+	T &= T' + T_1 = T_s + T_t + T_1= T_s + fg + T_1 \\
+	&= T_1 + \frac{T_2-T_1}{L_2-L_1}(x-L_1) + \sum_n e^{- \frac{n^2\pi^2}{(L_2-L_1)^2}\alpha   t}  \left(\frac{2}{n\pi} \left((T_2 - T_i)(-1)^n - (T_1-T_i) \right) \right) \sin(\frac{n\pi (x-L_1)}{L_2-L_1}) 
+\end{align}
+%\frac{n\pi\alpha}{L_2-L_1} 
 
 
+\subsection*{b and c}
 
-Transform coordinates $x \rightarrow x - L_1$ and $L \rightarrow L_2 - L_1$ 
-
-\subsection{2b}
-
-A program for numerically solving the above equation was written in matlab and are listed below. The series in xx was truncated when the largest value at any point was less then the machine precision (This approach would require that the series is montonically decreasing. This has not been checked). A maximum of 200 terms were included. For $t0=0$ 200 terms were included while for all the other times less than 14 terms were included.
+A program for numerically solving  (\ref{eq:final}) was written in matlab and is listed below. The series in (\ref{eq:final}) was truncated when the largest value at any position was less then the machine precision (This approach would require that the series is montonically decreasing. This has not been checked). A maximum of 200 terms were included. For $t0=0$ 200 terms were included while for all the other times less than 14 terms were included.
 
 \lstinputlisting[language=matlab]{ps01.m}
 \lstinputlisting[language=matlab]{Texact.m}
