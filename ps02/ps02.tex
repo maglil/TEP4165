@@ -1,18 +1,131 @@
 \documentclass{article}
 
+\input{../tep4165-preamble}
+
 \begin{document}
+
+
 
 \section{Task 1}
 
-\subsection*{a)
+\subsection*{a)}
 
+\textbf{Discretization}
 %Discretize heat with standard FVM and explicit Euler
-Starting with the heat equation
-\b
 
+Starting with the heat equation
+
+\begin{equation}
+	\partial_t T = \alpha \partial_x^2 T
+\end{equation}
+
+we write this as an integral equation on the interval $x_w$, $x_e$.
+
+\begin{equation}
+	\int_{x_w}^{x_e}  \partial_t T \dd{x} = \int_{x_w}^{x_e}  \alpha \partial_x^2 T \dd{x}
+\end{equation}
+
+On the LHS take the time derivative outside the integral, approximate the integral by the value at the midpoint multiplied by the interval $T_P \Delta x$, and assume $\alpha$ constant to give
+
+\begin{equation}
+ 	\partial_t T_P = \alpha (\partial_x T |_{x_w} - \partial_x T |_{x_e})
+\end{equation}
+
+Use explicit euler to discretize the time derivative and a central schemer for the space derivatives resulting in
+
+\begin{equation}
+ 	T_P^{n+1} = T_P^n + r ( -2T_P^n + T_E^n + T_W^n)
+\end{equation}
+
+where $r = \dfrac{\alpha \Delta t }{\Delta x^2} $.
+
+
+\textbf{Convergence}
+
+We check first for consistency.
+
+xxx
 
 %Show convergent.
+To show that convergence we will assume that $D$ is the exact solution to the discretized equation and $N = D+\epsilon$ the numerical solution. Since the discretized equation is linear it also satisfied by the numerical error $\epsilon$. Assume that the solution can be written as a Fourier sum $\epsilon = \sum_n\sum_n b e^{ik_nx}e^{ia_mt}$. If we focus on a single frequency component $a = a_m$  we can than see that a subsequent time step can be written as $\epsilon^{n+1}=e^{ia\Delta t}\epsilon^n$. We will assume the method is stable if 
 
+\begin{equation}	
+	|G| = |e^{ia\Delta t}\| \leq 1
+\end{equation}
+
+If we plug a single component of the numerical error into the discretized equation we end up with
+
+\begin{equation}
+ 	e^{ia\Delta t} = 1 + r(-2+e^{ik\Delta x}-e^{-ik\Delta x}) = 1 - 2r(1-\cos(\beta))
+\end{equation}
+
+with $\beta = k \Delta x$.
+
+We thus need
+
+\begin{equation}
+	|1 - 2r(1-\cos(\beta))| \leq 1
+\end{equation}
+
+Checking first the case LHS inside the absolute value is positive
+
+\begin{equation}
+	1 - 2r(1-\cos(\beta)) \leq 1
+\end{equation}
+
+which corresponds to 
+
+\begin{equation}
+	\cos(\beta) \leq 1
+\end{equation}
+
+which is always satisified. Checking the case if LSH inside absolute value is negeative
+
+\begin{equation}
+	-(1 - 2r(1-\cos(\beta))) \leq 1
+\end{equation}
+
+\begin{equation}
+	 2r(1-\cos(\beta)) \leq 2
+\end{equation}
+
+Resulting in
+
+\begin{equation}
+	r(1-\cos(\beta)) \leq 1
+\end{equation}
+
+The maximum value in the parenthesis is 2 (for $\cos\beta = -1)$ so to ensure the inequality is satisfied we must have
+
+\begin{equation}
+ 	0 \leq \leq \frac{1}{2}
+\end{equation}
+
+The greater than zero condition follows from the assumption that the LHS was negative.
+
+Since the system is consistent and stable we say it is convergent (approaching true solution to PDE when grid size is reduced).
+
+\subsection*{b}
+
+For the implicit method
+
+\section*{Task 2}
+
+\subsection*{Task 1}
+
+Solution algorithm
+
+\begin{lstlisting}
+# Initialize values
+
+# Create two arrays holding the temperature at the center of the finite elements. 
+#One for new and previous time step.
+
+# Loop for each time step
+	# Update endpoints with discretization for boundary values.
+	# Update interior points with the discretization step in 1a)
+	# Update previous time step with new time step
+\end{lstlisting}
 
 \end{document}
 
