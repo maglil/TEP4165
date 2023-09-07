@@ -37,7 +37,17 @@ Use explicit euler to discretize the time derivative and a central schemer for t
  	T_P^{n+1} = T_P^n + r ( -2T_P^n + T_E^n + T_W^n)
 \end{equation}
 
-where $r = \dfrac{\alpha \Delta t }{\Delta x^2} $.
+where $r = \dfrac{\alpha \Delta t }{\Delta x^2} $. For the boundarys we have 
+
+\begin{equation}
+ 	T_{NJ}^{n+1} = T_{NJ}^n + r ( -3T_{NJ}^n + T_{NJ-1}^n + 2T_2^n)
+\end{equation}
+
+\begin{equation}
+ 	T_{1}^{n+1} = T_1^n + r ( -3T_{1}^n + T_{2}^n + 2T_1^n)
+\end{equation}
+
+
 
 
 \textbf{Convergence}
