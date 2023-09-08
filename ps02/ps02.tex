@@ -28,16 +28,17 @@ we write this as an integral equation on the interval $x_w$, $x_e$.
 On the LHS take the time derivative outside the integral, approximate the integral by the value at the midpoint multiplied by the interval $T_P \Delta x$, and assume $\alpha$ constant to give
 
 \begin{equation}
- 	\partial_t T_P = \alpha (\partial_x T |_{x_w} - \partial_x T |_{x_e})
+ 	\Delta x\partial_t T_P = \alpha (\partial_x T |_{x_w} - \partial_x T |_{x_e})
 \end{equation}
 
 Use explicit euler to discretize the time derivative and a central schemer for the space derivatives resulting in
 
 \begin{equation}
+	\label{eq:explicit}
  	T_P^{n+1} = T_P^n + r ( -2T_P^n + T_E^n + T_W^n)
 \end{equation}
 
-where $r = \dfrac{\alpha \Delta t }{\Delta x^2} $. For the boundarys we have 
+where $r = \dfrac{\alpha \Delta t }{\Delta x^2} $. For the boundaries we have 
 
 \begin{equation}
  	T_{NJ}^{n+1} = T_{NJ}^n + r ( -3T_{NJ}^n + T_{NJ-1}^n + 2T_2^n)
@@ -52,18 +53,29 @@ where $r = \dfrac{\alpha \Delta t }{\Delta x^2} $. For the boundarys we have
 
 \textbf{Convergence}
 
-We check first for consistency.
+We check first for \emph{consistency}.
 
-xxx
+Taylor expanding each side of (\ref{eq:explicit}) and using $T= T_P$ and subscripts do indicate partial derivatives.
 
-%Show convergent.
-To show that convergence we will assume that $D$ is the exact solution to the discretized equation and $N = D+\epsilon$ the numerical solution. Since the discretized equation is linear it also satisfied by the numerical error $\epsilon$. Assume that the solution can be written as a Fourier sum $\epsilon = \sum_n\sum_n b e^{ik_nx}e^{ia_mt}$. If we focus on a single frequency component $a = a_m$  we can than see that a subsequent time step can be written as $\epsilon^{n+1}=e^{ia\Delta t}\epsilon^n$. We will assume the method is stable if 
+\begin{equation}
+ 	T + \Delta T_t + O(\Delta t^2) = T + r(-2T + T + \Delta x T_x + \frac{\Delta x^2}{2}Txx + O(\Delta x^3) - ( T - \Delta x T_x + \frac{\Delta x^2}{2}T_{xx} + O(\Delta x^3)
+\end{equation}
+
+Cancelling terms we get
+
+\begin{equation}
+ 	T_t + O(\Delta t) = \alpha T_{xx} + O(\Delta x)
+\end{equation}
+
+As $\Delta t \rightarrow 0 $ and $\Delta x \rightarrow 0 $ we see that we get the original PDE so the scheme is \emph{consistent}. We also see it is first order in time and space. 
+
+Second we check for \emph{stability}. We will assume that $D$ is the exact solution to the discretized equation and $N = D+\epsilon$ the numerical solution. Since the discretized equation is linear it also satisfied by the numerical error $\epsilon$. Assume that the error can be written as a Fourier sum $\epsilon = \sum_n\sum_n b e^{ik_nx}e^{ia_mt}$. If we focus on a single frequency component $a = a_m$  we can than see that a subsequent time step can be written as $\epsilon^{n+1}=e^{ia\Delta t}\epsilon^n$. We will assume the method is stable if 
 
 \begin{equation}	
 	|G| = |e^{ia\Delta t}\| \leq 1
 \end{equation}
 
-If we plug a single component of the numerical error into the discretized equation we end up with
+That is, errors are not amplified at each time step. If we plug a single component of the numerical error into the discretized equation we end up with
 
 \begin{equation}
  	e^{ia\Delta t} = 1 + r(-2+e^{ik\Delta x}-e^{-ik\Delta x}) = 1 - 2r(1-\cos(\beta))
@@ -108,16 +120,28 @@ Resulting in
 The maximum value in the parenthesis is 2 (for $\cos\beta = -1)$ so to ensure the inequality is satisfied we must have
 
 \begin{equation}
- 	0 \leq \leq \frac{1}{2}
+ 	0 \leq r \leq \frac{1}{2}
 \end{equation}
 
 The greater than zero condition follows from the assumption that the LHS was negative.
 
-Since the system is consistent and stable we say it is convergent (approaching true solution to PDE when grid size is reduced).
+Since the system is \emph{consistent} and \emph{stable} we say it is \emph{convergent} (approaching true solution to PDE when grid size is reduced).
 
-\subsection*{b}
+\subsection*{b)}
 
-For the implicit method
+For the implicit method the resulting discretization is
+
+\begin{equation}
+ 	T_P^{n+1} -  T_P^n=  r ( -2T_P^{n+1} + T_E^{n+1} + T_W^{n+1})
+\end{equation}
+
+which can be simplified to
+
+\begin{equation}
+	\label{eq:implicit}
+ 	T_P^{n+1}(1+2r) -rT_E^{n+1} -r T_W^{n+1} =  T_P^n
+\end{equation}
+
 
 \section*{Task 2}
 
