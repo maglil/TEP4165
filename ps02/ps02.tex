@@ -4,7 +4,7 @@
 
 \begin{document}
 
-
+\maketitle{2}
 
 \section{Task 1}
 
@@ -142,10 +142,70 @@ which can be simplified to
  	T_P^{n+1}(1+2r) -rT_E^{n+1} -r T_W^{n+1} =  T_P^n
 \end{equation}
 
+Taylor expanding about $T_P^{n+1} = T$
+
+\begin{equation}
+T(1+2r) - r(T + T_x \Delta x + T_{xx} \frac{\Delta x^2}{2} + O(\Delta x^3)) - r(T - T_x \Delta x + T_xx \frac{\Delta x^2}{2}+ O(\Delta x^3)) = T - \Delta t T_t + O(\Delta t^2)
+\end{equation}
+
+Simplifying the expression we end up with
+
+\begin{equation}
+ 	-r (T_{xx}\Delta x^2 +  O(\Delta x^3) ) = -\Delta t T_t  + O(\Delta t^2)
+\end{equation}
+
+Dividing through by $\Delta t$ and using $r = \frac{\alpha \Delta t}{\Delta x^2}$
+
+\begin{equation}
+ 	\alpha T_{xx} +  O(\Delta x)  = T_t  + O(\Delta t)
+\end{equation}
+
+We see this reduces to the original heat equation as the $\Delta$ go to zero and is thus consistent. The method is first order accurate.
+
+\textbf{Stability}
+
+Inserting the fourier components into equation \ref{eq:implicit} as in part 1 yields after dividing through by the fourier component
+
+\begin{equation}
+(1+2r) - re^{ik\Delta x} - re^{ik\Delta x} = e^{-i\Delta t}
+\end{equation}
+
+Using Eulers identity and $k\Delta x = \beta$
+
+\begin{equation}
+ 	1+2r - 2r\cos(\beta) =  e^{-i\Delta t}
+\end{equation}
+
+or
+
+\begin{equation}
+ 	G = e^{i\Delta t} = \frac{1}{1+2r - 2r\cos(\beta) }
+\end{equation}
+
+For stability we must have $|G| \leq 1$
+
+\begin{equation}
+ 	|1 + 2r(1-\cos(\beta) )| \geq 1
+\end{equation}
+
+The expression inside the absolut value is always positive so we get
+
+
+\begin{equation}
+ 	1 + 2r(1-\cos(\beta) ) \geq 1
+\end{equation}
+
+which simplifies to 
+
+\begin{equation}
+ 	\cos(\beta) \leq 1
+\end{equation}
+
+which is always true. The method is therefore unconditionally stable, and therefore convergent.
 
 \section*{Task 2}
 
-\subsection*{Task 1}
+\subsection*{a)}
 
 Solution algorithm
 
@@ -153,13 +213,84 @@ Solution algorithm
 # Initialize values
 
 # Create two arrays holding the temperature at the center of the finite elements. 
-#One for new and previous time step.
+# One for new and previous time step.
 
 # Loop for each time step
 	# Update endpoints with discretization for boundary values.
 	# Update interior points with the discretization step in 1a)
 	# Update previous time step with new time step
 \end{lstlisting}
+
+\subsection*{b)}
+
+The code for the remainder of task 2 is shown at the end of the document.
+
+\subsection*{c)}
+
+Figure \ref{fig:t01} shows the temperature distribution at $t=0.1$ s. The interior points are at the inital temperature and the boundary values are shown. Seems reasonable.
+
+\begin{figure}
+	\includegraphics{t_0.1.png}
+	\caption{Temperature distribution at $t=0.1$ s}
+	\label{fig:t01}
+\end{figure}
+
+\subsection*{d)}
+Figure \ref{fig:t40} shows the temperature distribution at $t=40$ s.
+
+\begin{figure}
+	\includegraphics{t_40.png}
+	\caption{Temperature distribution at $t=40$ s}
+	\label{fig:t40}
+\end{figure}
+
+\subsection*{e)}
+Figure \ref{fig:unstable} shows the simulation result when the stability criterion($r<0.5$) is violoate with  $=0.6$ s.
+
+\begin{figure}
+	\includegraphics{unstable.png}
+	\caption{Simulation result when the stability criterion is violated ($r=0.6$ s).}
+	\label{fig:unstable}
+\end{figure}
+
+\subsection*{f)}
+
+
+Figure \ref{fig:nj50}-\ref{fig:nj400} show the difference between the numerical and analytic solution for different spatial grid spacing.
+
+\begin{figure}[h!]
+\begin{minipage}{0.55\textwidth}
+            \includegraphics[width=\textwidth]{numerical_analytic50.png}
+            \caption{\small NJ=50}
+            \label{fig:nj50}
+\end{minipage}
+\begin{minipage}{0.55\textwidth}
+            \includegraphics[width=\textwidth]{numerical_analytic100.png}
+            \caption{\small NJ=100}
+            \label{fig:nj100}
+\end{minipage}
+\begin{minipage}{0.55\textwidth}
+            \includegraphics[width=\textwidth]{numerical_analytic200.png}
+            \caption{\small NJ=200}
+            \label{fig:nj200}
+\end{minipage}
+\begin{minipage}{0.55\textwidth}
+            \includegraphics[width=\textwidth]{numerical_analytic400.png}
+            \caption{\small NJ=400}
+            \label{fig:nj400}
+\end{minipage}
+\end{figure}
+
+\subsection*{g)}
+The computed errors were 0.12, 0.061, 0.030, 0.015.
+
+\subsection*{h)}
+The convergence rate was computed to be about 1 which is compatible of the consistency analysis which indicated a first order method (Computed values for each of the pairs of grid spacings, 0.996, 1.0132, 1.0145).
+
+\clearpage
+\newpage
+
+\lstinputlisting[language = matlab]{ps02.m}
 
 \end{document}
 

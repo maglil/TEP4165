@@ -1,12 +1,11 @@
 function T = heateq1d(L1, L2, NJ, T0, r, tend, alpha, T1, T2)
-% heateq1d Solves the 1D heat equation with given boundary and inital
-% conditions
-%
+% heateq1d Solves the 1D heat equation with given boundary and initial
+% conditions using explicit Euler and central space derivatives
 
 dx = (L2-L1)/NJ;
 dt = r*dx^2/alpha;
 
-%Initalize vectors
+%Initialize vectors
 t = 0;
 T = T0;
 assert(length(T0) == NJ, "Length of inital temperature vector T0 does not match number of cells NJ");

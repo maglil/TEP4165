@@ -1,20 +1,29 @@
 clear all, clc, close all
 addpath("../ps01")
 
-% Set inital conditions
-
-NJ = 50;
+%% Properties
+% Material parameters
 alpha = 1e-2;
+
+% Discretization parameters
+NJ = 50;
+r = 0.25;
+tend = 40;
+
+% Geometry
 L1 = -3;
 L2 = 5;
+
+% Inital conditions
 Ti = 305.15;
 T0 = Ti*ones(1,NJ);
-tend = 40;
+
+% Boundary conditions
 T1 = 253.15;
 T2 = 443.15;
-r = 0.25;
 
-%% Task 1c and d
+
+%% Task 2c and d
 
 T = heateq1d(L1, L2, NJ, T0, r, tend, alpha, T1, T2);
 
@@ -33,9 +42,9 @@ plot(x,Tbv, 'LineWidth', 1.5);
 title("Temperature distribution for NJ = " + num2str(NJ) + ", tend = " + num2str(tend))
 xlabel("Position")
 ylabel("Temperature")
-saveas(gcf,"T_" + num2str(tend) + ".png")
+saveas(gcf,"t_" + num2str(tend) + ".png")
 
-%% Task 1e
+%% Task 2e
 r = 0.6;
 T = heateq1d(L1, L2, NJ, T0, r, tend, alpha, T1, T2);
 Tbv(2:end-1) = T;
@@ -46,7 +55,8 @@ xlabel("Position")
 ylabel("Temperature")
 saveas(gcf,"unstable" + ".png")
 
-%% Task 1f
+%% Task 2f and 2g
+
 r = 0.25;
 NJ = [50, 100, 200, 400];
 error2 = zeros(1,length(NJ));
