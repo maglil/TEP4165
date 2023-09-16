@@ -1,0 +1,62 @@
+\documentclass{article}
+
+\input{../tep4165-preamble.tex}
+
+\begin{document}
+
+\section{Task 1}
+
+\subsection{a)}
+We want discretize the 1D advection equation 
+
+\begin{equation}
+ 	\partial_t T + u \partial_x T = 0	
+\end{equation}
+
+with explicit euler in time and upwind FVM in space. First we integrate the equation over a finite volume
+
+\begin{equation}
+ 	\int_{x_e}^{x_w} (\partial_t T + u \partial x T )\dd{x} = 0
+\end{equation}
+
+Which results in 
+
+\begin{equation}
+\Delta x \partial_t T_p + uT_e - uT_w = 0
+\end{equation}
+
+where we have introduced the approximation $T_P \Delta x  \approx \int_{x_e}^{x_w} T\dd{x}$. Switching from Patankar's to index notation we then discretize the equation using the explicit Euler in time and upwind for the cell faces (using the value from the upwind direction),
+
+\begin{equation}
+	\frac{\Delta x}{\Delta t} (T_j^{n+1} - T_j^n) + u T_{j+1} - uT_j = 0
+\end{equation}
+
+Simplifying
+
+\begin{equation}
+	\label{eq:upwind}
+ 	T_j^{n+1} = T_j^n + C (T_{j+1} + T_{j-1})
+\end{equation}
+
+where $C = \dfrac{u\Delta t}{\Delta x}$, the Courant number.
+
+\subsection*{b)}
+
+Taylor expanding the expression with a smooth solution $T(x,t)$ into (\ref{eq:upwind}) results in
+
+\begin{equation}
+ 	T + T_t \Delta T + T_{tt}\frac{\Delta t^2}{2} - T +	C(T + T_x \Delta x + T_{xx}  \frac{\Delta x^2}{2} - T) = 0
+\end{equation}
+and simplifies to
+
+\begin{equation}
+ 	T_t  + T_{tt}\frac{\Delta t}{2} +	u( T_x  + T_{xx}  \frac{\Delta x}{2} ) =0
+\end{equation}
+
+\begin{align}
+	T_t  + T_{tt}\frac{\Delta t}{2} +	u( T_x  + T_{xx}  \frac{\Delta x}{2} ) =0
+\end{align}•
+
+\section{Task 2}
+
+\end{document}
