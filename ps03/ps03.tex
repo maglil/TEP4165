@@ -4,6 +4,8 @@
 
 \begin{document}
 
+\maketitle{1}
+
 \section{Task 1}
 
 \subsection{a)}
@@ -22,41 +24,149 @@ with explicit euler in time and upwind FVM in space. First we integrate the equa
 Which results in 
 
 \begin{equation}
-\Delta x \partial_t T_p + uT_e - uT_w = 0
+\Delta x \partial_t T_P + uT_e - uT_w = 0
 \end{equation}
 
 where we have introduced the approximation $T_P \Delta x  \approx \int_{x_e}^{x_w} T\dd{x}$. Switching from Patankar's to index notation we then discretize the equation using the explicit Euler in time and upwind for the cell faces (using the value from the upwind direction),
 
 \begin{equation}
-	\frac{\Delta x}{\Delta t} (T_j^{n+1} - T_j^n) + u T_{j+1} - uT_j = 0
+	\label{eq:upwind0}
+	\frac{\Delta x}{\Delta t} (T_j^{n+1} - T_j^n) + u T^n_{j+1} - uT^n_j = 0
 \end{equation}
 
 Simplifying
 
 \begin{equation}
 	\label{eq:upwind}
- 	T_j^{n+1} = T_j^n + C (T_{j+1} + T_{j-1})
+ 	T_j^{n+1} = T_j^n(1 - C) -C T^n_{j+1}
 \end{equation}
 
 where $C = \dfrac{u\Delta t}{\Delta x}$, the Courant number.
 
 \subsection*{b)}
 
-Taylor expanding the expression with a smooth solution $T(x,t)$ into (\ref{eq:upwind}) results in
+Taylor expanding a smooth solution $T(x,t)$ and substituting into (\ref{eq:upwind0}) results in
 
 \begin{equation}
- 	T + T_t \Delta T + T_{tt}\frac{\Delta t^2}{2} - T +	C(T + T_x \Delta x + T_{xx}  \frac{\Delta x^2}{2} - T) = 0
+ 	T + T_t \Delta t + T_{tt}\frac{\Delta t^2}{2} +O(\Delta t^3) - T +	C(T + T_x \Delta x + T_{xx}  \frac{\Delta x^2}{2} + O(\Delta x^3)- T) = 0
 \end{equation}
 and simplifies to
 
 \begin{equation}
- 	T_t  + T_{tt}\frac{\Delta t}{2} +	u( T_x  + T_{xx}  \frac{\Delta x}{2} ) =0
+ 	T_t  + T_{tt}\frac{\Delta t}{2}  + O(\Delta t^2) +	u( T_x  + T_{xx}  \frac{\Delta x}{2} + O(\Delta x^2) ) =0
 \end{equation}
 
+\subsection{c)}
+
+The discretized equation and its time and space derivative are, respectively
+
 \begin{align}
-	T_t  + T_{tt}\frac{\Delta t}{2} +	u( T_x  + T_{xx}  \frac{\Delta x}{2} ) =0
-\end{align}•
+	T_t  + T_{tt}\frac{\Delta t}{2} + 	u( T_x  + T_{xx}  \frac{\Delta x}{2} ) =0 \\
+	T_{tt}  + T_{ttt}\frac{\Delta t}{2} +	u( T_{xt}  + T_{xxt}  \frac{\Delta x}{2} ) =0 \\
+	T_{tx}  + T_{ttx}\frac{\Delta t}{2} +	u( T_{xx}  + T_{xxx}  \frac{\Delta x}{2} ) =0 \\
+\end{align}
+Subtracting $\Delta t/2$ from the first and adding $u\Delta t/2$ times the second to the original equation results in
+
+\begin{equation}
+T_t  + uT_{x} = -\frac{u\Delta x}{2} (1+ C)T_{xx} + O(\Delta x^2, \Delta t^2)
+\end{equation}
+
+\subsection{d)}
+
+We see that in addition to the original equation on the left hand side we get a diffusive term ($T_{xx}$) on the right hand side which we call the numerical viscosity. Note that $C<0$ and with $C=-1$ the diffusive term diseappears. If we had retained higher order terms we would also get a dispersive term $T_{xxx}$.
 
 \section{Task 2}
 
+\subsection{a)}
+Since the temperature is convected in the negative $x$-direction ($u<0$) then a boundary condition must be prescribed at the upper/right boundary, that is $T_b = T(1,t) = T(1,0)$.
+
+\subsection{b)}
+
+The temperatur distribution is simply convected in the negative direction with velocity $u$ so the solution is
+
+\begin{equation}
+T(x,t) =
+	\begin{cases}
+	1000	&0  < x-vt < 0.5 \\
+	200 	 & 0.5 < x-vt < 1 \\   
+	\end{cases}
+\end{equation}
+
+\subsection{c)}
+
+\begin{lstlisting}
+% Set physical properties and discretization parameters
+
+% Initalize NJ long vectors with midpoint temperaturs in FVs T and Tnew
+% Initalize vector T with inital conditions
+% Initalize time 
+% Loop while time < t_end
+	% Loop through finite volumes
+		% Calculate new temperature according to upwind + exlipicit euler
+		% Assign to temperature vector 
+		% increase time by delta t
+\end{lstlisting}
+
+\newpage
+\subsection{d)}
+\lstinputlisting[language=matlab]{upwind.m}
+
+\subsection{e)}
+Figure \ref{fig:test} shows the temperature distribution after $0.05$ s. The result looks reasonable (The main matlab script is shown at the end of the document).
+
+\begin{figure}
+	\includegraphics{T0.05.png}
+	
+	\caption{Temperature distribution after 0.05 s with $C =0.75$.}
+	\label{fig:test}
+\end{figure}
+
+\subsection{f)}
+
+Figure \ref{fig:TC075} shows the temperature distribution after $1.2$ s with $C = 0.75$. The numerical solution demonstrates significant numerical diffusion/viscosity.
+
+\begin{figure}
+	\includegraphics{T1.2C-0.75.png}	
+	\caption{Temperature distribution after 1.2 s with $C =0.75$.}
+	\label{fig:TC075}
+\end{figure}
+
+\subsection{g)}
+Figure \ref{fig:diffc} shows temperature distributions for various values of $C$. As expect we see we have the smalles numerical viscosity for $C = 1$. Also as expected, the solutions becomes unstable when $C<-1$.
+
+\begin{figure}
+	\subfloat[Temperature distribution after 1.2 s with $C =-0.9$.]{
+	\includegraphics[width=0.45\textwidth]{T1.2C-0.9.png}	
+	}
+	\subfloat[Temperature distribution after 1.2 s with $C =-1$.]{
+	\includegraphics[width=0.45\textwidth]{T1.2C-1.png}	
+	} \\
+	\subfloat[Temperature distribution after 1.2 s with $C =-1.1$.]{
+	\includegraphics[width=0.45\textwidth]{T1.2C-1.1.png}	
+	}
+	\caption{Results for different values of $C$}
+	\label{fig:diffc}
+\end{figure}
+
+\subsection{h)}
+
+Figure \ref{fig:cosdiffc} shows simulation results with sinusoidal inital conditions. We see that the diffusion is much less pronounced since the temperature gradients are smaller (less diffusion). In the book by Tannehill, the dispersive term is given as proportional to $2C^2-3C+1$. This is zero at $C = 0.5$ and $C=1$. Guessing that these values also holds similarly for negative Courant numbers this is in agreement with the results that indicate little phase change for $C=-0.5$ and $C=-1$ and slightly more for $C=-0.9$.
+
+\begin{figure}
+	\subfloat[Temperature distribution after 1.2 s with $C =-0.5$.]{
+	\includegraphics[width=0.45\textwidth]{cosT1.2C-0.5.png}	
+	}
+	\subfloat[Temperature distribution after 1.2 s with $C =-0.9$.]{
+	\includegraphics[width=0.45\textwidth]{cosT1.2C-0.9.png}	
+	} \\
+	\subfloat[Temperature distribution after 1.2 s with $C =-1$.]{
+	\includegraphics[width=0.45\textwidth]{cosT1.2C-1.png}	
+	}
+	\caption{Results for different values of $C$}
+	\label{fig:cosdiffc}
+\end{figure}
+
+\clearpage
+\newpage
+\lstinputlisting[language=matlab]{ps03.m}
 \end{document}
