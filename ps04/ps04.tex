@@ -1,0 +1,32 @@
+\documentclass{article}
+
+\input{../tep4165-preamble}
+
+\begin{document}
+
+\section{Task 1}
+
+\maketitle{4}
+
+\subsection{a)}
+
+\begin{lstlisting}{language=matlab}
+% Solving 1D Burgers equation with
+% Initalize two vectors for new and current values of u
+% Set current value to inital condition
+% While t < tend
+	% For j = 1 to NJ-1
+		% Calculate convective flux using upwind values
+			% Method to choose correct upwind direction
+		% Calculate diffusive flux using central difference
+		% Sum all fluxes
+		% Calculate new u using explicit euler
+	% Set u(NJ) = u(1), periodic boundary condition
+	% Increase t by dt
+\end{lstlisting}
+
+
+
+
+
+\end{document}
