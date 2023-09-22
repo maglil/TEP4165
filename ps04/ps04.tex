@@ -25,7 +25,39 @@
 	% Increase t by dt
 \end{lstlisting}
 
+\subsection{b)}
+MUSCL approach
 
+Calculate left and right u values
+Use in minmod
+
+\subsection{c)}
+The advantage of the MUSCL approach is that it is higher order and has less numerical dissipation while maintaining TVD.
+
+\section{Task 2}
+
+\subsection{a)}
+
+\lstinputlisting[language=matlab]{upwind.m}
+
+\subsection{b)}
+\begin{figure}
+	\includegraphics[widht=0.8\linewidth]{ps04-2b.png}
+\end{figure}
+
+\subsection{c)}
+\begin{figure}
+	\includegraphics[widht=0.8\linewidth]{ps04-2c.png}
+\end{figure}
+
+\subsection{d)}
+Compare solutions
+
+\subsection{e}
+One way to check the solution is to check how the solution is dependent on the grid spacing.
+
+\subsection{f)}
+Grid refinement
 
 
 
