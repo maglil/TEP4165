@@ -8,7 +8,7 @@ alpha = 1e-2;
 % Discretization parameters
 NJ = 50;
 r = 0.25;
-tend = 40;
+tend = 0.1;
 
 % Geometry
 L1 = -3;

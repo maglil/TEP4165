@@ -4,7 +4,7 @@
 
 \begin{document}
 
-\maketitle{1}
+\maketitle{3}
 
 \section{Task 1}
 
@@ -74,6 +74,15 @@ T_t  + uT_{x} = -\frac{u\Delta x}{2} (1+ C)T_{xx} + O(\Delta x^2, \Delta t^2)
 \subsection{d)}
 
 We see that in addition to the original equation on the left hand side we get a diffusive term ($T_{xx}$) on the right hand side which we call the numerical viscosity. Note that $C<0$ and with $C=-1$ the diffusive term diseappears. If we had retained higher order terms we would also get a dispersive term $T_{xxx}$.
+
+\subsection{e)}
+Performing von Neuman stability using a central FVM (boundary values as averages of neighbours) for the analysis I get that
+
+\begin{equation}
+ 	|1+ C\cos(\beta)| \leq 0
+\end{equation}
+
+which can never be guaranteed for finite $C$ and arbitrary $\beta$. Hence, the method seems to be unconditionally unstable. 
 
 \section{Task 2}
 

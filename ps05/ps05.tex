@@ -1,0 +1,173 @@
+\documentclass{article}
+
+\input{../tep4165-preamble}
+
+\newcommand{\oh}{\frac{1}{2}}
+\begin{document}
+
+\maketitle{5}
+
+\section{Task 1}
+
+\subsection{a)}
+
+To solve the euler equations with the Rusanov method and explicit Euler we start we the Euler equations
+
+\begin{equation}
+\partial_t U + \partial_x f(U)  = 0
+\end{equation}
+
+Integrate over a cell yields
+
+\begin{equation}
+\partial_t U \Delta x + f(U)_e - f(U)_w = 0
+\end{equation}
+
+Here U is renamed as the average value of U in a cell. Then we discretize the time derivative using explicit Euler which results in
+
+\begin{equation}
+U_j^{n+1}  = U_j^n - \frac{\Delta t}{\Delta x} ( f(U)_{j+\oh} - f(U)_{j-\oh} )
+\end{equation}
+
+The fluxes at the cell faces are calculated according to Rusanov's method
+
+\begin{equation}
+f_{j+\oh}(U) = \oh (f(U)_{j+1} + f(U)_j - |a_{j+\oh}| (U_{j+1} - U_j) )
+\end{equation}
+
+where 
+
+\begin{equation}
+a_{j+\oh} = \text{max}(|u_L| + c_L, |u_R| + c_R)
+\end{equation}
+
+The velocity needed to calculated $u_{i}$ is found from the state vector $U$ as $U(2)/U(1) = \rho u /\rho = u$. The speed of sound $c_i$ of an ideal gas is given by
+
+\begin{equation}
+c = \sqrt{\frac{\gamma p }{\rho}}
+\end{equation}
+
+and the pressure is found from 
+
+\begin{equation}
+p = (\gamma - 1) (U(3) - \oh U(2)^2/U(1) ) = (\gamma -1 ) (\rho E - \oh (\rho u)^2/\rho)
+\end{equation}
+
+\subsection{b)}
+The array of fluxes through the cell faces is padded with one value of either side and the padded value is set equal to the first and last values. This array then holds all the values necessary to compute the next time step for all cells using forward Euler. The padding is performed in the function which calculates the fluxes (i.e. \texttt{rusanov.m} in my implementation).
+
+\subsection{c)}
+Figure \ref{fig:resuls} show the density, velocity and pressure of the gas after $ t = 0.024$ s. We can see that the results fit the analytic solution quite well. Even though the Rusanov method is less dissipative than Lax-Friedrich, we can still see that the sharp corners are smeared out by the numerical viscosity in the Rusanov method (the $|a|(U_R - U_L)$ term). Matlab scripts are shown at the end.
+
+\begin{figure}
+	\centering
+	\begin{minipage}{0.45\textwidth}
+		\includegraphics[width = 0.9\textwidth]{rho.png}
+	\end{minipage} \hfill
+	%
+	\begin{minipage}{0.45\textwidth}
+		\includegraphics[width = 0.9\textwidth]{u.png}
+	\end{minipage}	
+	%
+	%
+	\begin{minipage}{0.45\textwidth}
+		\includegraphics[width = 0.9\textwidth]{p.png}
+	\end{minipage}
+	\caption{Density, velocity and pressure after $t=0.024$ s}
+	\label{fig:results}
+\end{figure}
+
+\subsection{d)}
+
+Figure \ref{fig:dt} shows results with $\Delta t = 0.0001\Delta x$. Surprisingly it seems like decreasing $\Delta t$ actually makes the corners slightly less sharp. I have not been able to figure out why this is so. Maybe the Rusanov has a similar effect as Lax-Friedrich were the numerical viscosity increases as $\Delta t \rightarrow 0$. The smearing is different on different discontinuities. E.g. the left discontinuity in the density is spread out over 0.4 to 0.55 which is about 60 cells. The right discontinuity of the velocity runs from about 0.56 to 0.58 which is about 8 cells. The dependence on $\Delta t$ might be due to the fact that discontinuities represents very large gradients which move very fast, therefore high time resolution is needed to capture this dynamics. The method is unstable above $\Delta t = 0.0191\Delta x$.
+
+\begin{figure}
+	\centering
+	\begin{minipage}{0.45\textwidth}
+		\includegraphics[width = 0.9\textwidth]{rho_dt.png}
+	\end{minipage} \hfill
+	%
+	\begin{minipage}{0.45\textwidth}
+		\includegraphics[width = 0.9\textwidth]{u_dt.png}
+	\end{minipage}	
+	%
+	%
+	\begin{minipage}{0.45\textwidth}
+		\includegraphics[width = 0.9\textwidth]{p_dt.png}
+	\end{minipage}
+	\caption{Density, velocity and pressure after with $\Delta t = 0.0001\Delta x$ s}
+	\label{fig:dt}
+\end{figure}
+
+\subsection{e)}
+We have previously analyzed the stability of the advection equation and found that it is stable if the Courant number $C = \dfrac{a\Delta t}{\Delta x}$ is less than 1. Rearranging we find then that
+
+\begin{equation}
+\Delta t \leq \Delta x / a
+\end{equation}
+
+Using the spectral radius of the Jacobian matrix as $a$ we get
+
+\begin{equation}
+\Delta t \leq \Delta x / 1.533 = 0.018 \Delta x
+\end{equation}
+
+\subsection{f)}
+To implement the MUSCL approach we would just have to implement a new function to calculate the fluxes at the cell faces. The method would need to use two cells on either side of the face to get second order in the approximation of the flux. One would also need to implement a scheme to detect extrema and revert to a first order (Godunov) method in these cases. As we have assumed flat fluxes at the boundaries we could just use the same scheme here.
+
+\subsection{g)}
+
+The discretized with Lax-Friedrichs becomes 
+
+\begin{equation}
+\Delta x \omega_t + a [\oh(\omega_{j+1} + \omega_j - \frac{\Delta x}{\Delta t}(\omega_{j+1} - \omega_j) ) - \oh(\omega_{j} + \omega_{j-1} - \frac{\Delta x}{\Delta t}(\omega_{j} - \omega_{j-1}) ) 
+\end{equation}
+
+Simplifying gives
+
+\begin{equation}
+\Delta x \omega_t + a \oh(\omega_{j+1} + \omega_{j-1} - \frac{\Delta x}{\Delta t}(\omega_{j+1} + \omega_{j-1} - 2\omega_j) ) 
+\end{equation}
+
+Taylor expanding we get
+
+\begin{equation}
+\omega_{j+1} + \omega_{j-1}  = 2 \omega_x \Delta x + O(\Delta x^3)
+\end{equation}
+
+\begin{equation}
+\omega_{j+1} + \omega_{j-1} - 2\omega_j = \omega_{xx} \Delta x^2 + O(\Delta x^3)
+\end{equation}
+
+Discretizing with explicit Euler we get
+
+\begin{equation}
+\omega_t = \omega_t + O(\Delta t)
+\end{equation}
+
+Substituting back, rearranging in and dividing through by $\Delta x$ we get
+
+\begin{equation}
+	\omega_t + a \omega_x + \frac{a\Delta x^2}{2\Delta t}\omega_{xx} + O(\Delta t, \Delta x^2) = 0
+\end{equation}
+
+We see that the numerical viscosity is $\nu_{num} = \frac{a\Delta x^2}{2\Delta t}$.
+
+Plugging in a Fourier component for the convergence analysis I get
+
+\begin{equation}
+	1 + \frac{a}{2\Delta x} \sinh(k\Delta x) - \frac{a}{2\Delta t} \cos(k\Delta x) \leq 1
+\end{equation}
+
+Not sure how to analyse this. Since the $\sinh()$ function is unbounded it seems like the method could not be stable.
+
+\newpage
+
+\lstinputlisting[language=matlab]{ps05.m}
+\lstinputlisting[language=matlab]{euler1D.m}
+\lstinputlisting[language=matlab]{rusanov.m}
+\lstinputlisting[language=matlab]{flux_cons_gas.m}
+\lstinputlisting[language=matlab]{lax_friedrich.m}
+
+
+\end{document}
