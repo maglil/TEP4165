@@ -1,1 +1,0 @@
-function F = approx(U,method)
