@@ -1,21 +1,47 @@
 \documentclass{article}
 
-\input{tep4165-preamble}
+\input{../tep4165-preamble}
+
+\newcommand{\tref}{\frac{L}{\sqrt{\frac{p_l}{\rho_l}}}}
+\newcommand{\vref}{ \sqrt{\frac{p_l}{\rho_l}} }
 
 \begin{document}
+
 
 \maketitle{6}
 
 \section{Task 1}
 
 \subsection{a)}
-Nondimensionalize variables
+The nondimensnional variables are
+
+\begin{align}
+	x^* &= \frac{x}{L} \\
+	t^* &= \frac{t}{L/\sqrt{\frac{p_l}{\rho_l}}} \\
+	p^* &= \frac{p}{p_l} \\
+	u^* &= \frac{v}{\sqrt{\frac{p_l}{\rho_l}}} \\
+	(\rho E)^* &= \frac{\rho E}{p_l} \\
+	\rho^* &= \frac{\rho}{\rho_l} \\
+	T^* &= \frac{T}{T_l}
+\end{align}
 
 \subsection{b)}
-Nondimensionalize operators
+The Nondimensionalized operators are
+
+\begin{align}
+	\partial_x^* &= L\partial_x \\
+	\partial_t^* &= L/\sqrt{\frac{p_l}{\rho_l}} \partial_t \\
+	(\partial_x^2)^* &= L^2 \partial_x^2
+\end{align}
 
 \subsection{c)}
 Nondimensionalize equations
+
+The nondimensionalized continuity equations becomes
+
+\begin{equation}
+ 	\rho_l \tref (\partial_t)^* \rho^* + 
+\end{equation}
 
 \subsection{d)}
 Discribe discretization of equations EE and CS
