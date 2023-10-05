@@ -31,7 +31,7 @@ U0(:,NJ/2+1:NJ) = repmat(Ur,1,NJ/2);
 alpha = 0.125;
 
 % Simulation duration
-tend = 0.;
+tend = 0.3;
 
 %% Solve
 clc

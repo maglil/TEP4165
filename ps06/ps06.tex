@@ -4,6 +4,7 @@
 
 \newcommand{\tref}{\frac{L}{\sqrt{\frac{p_l}{\rho_l}}}}
 \newcommand{\vref}{ \sqrt{\frac{p_l}{\rho_l}} }
+\renewcommand{\Re}{\text{Re}}
 
 \begin{document}
 
@@ -17,9 +18,9 @@ The nondimensnional variables are
 
 \begin{align}
 	x^* &= \frac{x}{L} \\
-	t^* &= \frac{t}{L/\sqrt{\frac{p_l}{\rho_l}}} \\
+	t^* &= \frac{t}{L/\sqrt{\frac{p_l}{\rho_l}}} = \frac{t}{t_r} \\
 	p^* &= \frac{p}{p_l} \\
-	u^* &= \frac{v}{\sqrt{\frac{p_l}{\rho_l}}} \\
+	u^* &= \frac{v}{\sqrt{\frac{p_l}{\rho_l}}} = \frac{u}{u_r} \\
 	(\rho E)^* &= \frac{\rho E}{p_l} \\
 	\rho^* &= \frac{\rho}{\rho_l} \\
 	T^* &= \frac{T}{T_l}
@@ -30,7 +31,7 @@ The Nondimensionalized operators are
 
 \begin{align}
 	\partial_x^* &= L\partial_x \\
-	\partial_t^* &= L/\sqrt{\frac{p_l}{\rho_l}} \partial_t \\
+	\partial_t^* &= L/\sqrt{\frac{p_l}{\rho_l}} \partial_t = t_r \partial_t\\
 	(\partial_x^2)^* &= L^2 \partial_x^2
 \end{align}
 
@@ -40,7 +41,59 @@ Nondimensionalize equations
 The nondimensionalized continuity equations becomes
 
 \begin{equation}
- 	\rho_l \tref (\partial_t)^* \rho^* + 
+ 	\rho_l \frac{\vref}{ L} (\partial_t)^* \rho^* + \frac{1}{L} \partial_{x^*} (\rho_l\rho^* \vref u^*) = 0
+\end{equation}
+
+which simplifies to (skipping the stars)
+
+\begin{equation}
+ 	\partial_t\rho + \partial_x(\rho u) = 0
+\end{equation}
+
+For the momentum equation we get
+
+\begin{equation}
+\frac{u_r}{L}\partial_{t^*}(\rho_l\rho^* u_r u^*) + \frac{1}{L}(\rho_l \rho^* u_r^2 (u^*)^2 + p_l p^*)_x = \frac{1}{L^2}(\frac{4}{3}\mu u_r u^*)_{xx}
+\end{equation}
+
+
+Multiply whole equation by $\dfrac{L}{\rho_l u_r^2}$
+
+\begin{equation}
+\partial_{t^*}(\rho^*  u^*) + ( \rho^*  (u^*)^2 + \dfrac{1}{\rho_l u_r^2}p_l p^*)_x = \dfrac{1}{L \rho_l u_r}(\frac{4}{3}\mu u^*)_{xx}
+\end{equation}
+
+From part a we see that $\dfrac{1}{\rho_l u_r^2}p_l=1$ and $ \dfrac{\mu}{L \rho_l u_r} = \frac{1}{Re}$  so that finally (skipping stars) we get
+
+\begin{equation}
+\partial_{t}(\rho  u) + ( \rho  u^2 +  p)_x = \frac{4}{3 \Re}( u)_{xx}
+\end{equation}
+
+For the energy equation we get
+
+\begin{equation}
+\frac{p_l}{t_r} ((\rho E)*)_{t^*} + \frac{1}{L} ( (p_l(pE)^*+p_l p^*)u_r u^*  )_{x^*} = \frac{1}{L^2} (\frac{2}{3}\mu u_r^2 u^2 + k T_l T)_{xx}
+\end{equation}
+
+Dividing through by $\frac{p_l u_r}{L}$ and using that $\frac{p_l}{t_r} = \frac{p_l}{L/u_r}$ we get
+
+
+\begin{equation}
+ ((\rho E)*)_{t^*} +  ( ((pE)^*+p^*)u^*  )_{x^*} = \frac{L}{p_l u_r} \frac{1}{L^2} (\frac{2}{3}\mu u_r^2 u^2 + k T_l T)_{xx}
+\end{equation}
+
+Using from part a) that $p_l = \rho u_r^2$ , $ \dfrac{\mu}{L \rho_l u_r} = \frac{1}{Re}$ for the first term in the diffusive flux. For the second term we get
+
+\begin{equation}
+\frac{kT_l}{p_l u_r L} =  \frac{k p_l/(\rho_l R}{p_l u_r L} = \frac{k}{\rho_l u_r L R} = \frac{k}{\Re \mu R } = \frac{k\gamma}{\mu (\gamma -1) c_p} = \frac{\gamma}{\Re Pr (\gamma -1)}
+\end{equation}
+
+where we have used $ R = \gamma/(\gamma-1) c_p$ and $1/Pr = \frac{k}{c_p \mu}$.
+
+Thus finally we get (removing stars) 
+
+\begin{equation}
+ ((\rho E))_{t} +  ( ((pE)+p)u  )_{x} = \frac{1}{\Re} (\frac{2}{3}\mu  u^2 + \frac{\gamma}{Pr (\gamma-1)} T)_{xx}
 \end{equation}
 
 \subsection{d)}

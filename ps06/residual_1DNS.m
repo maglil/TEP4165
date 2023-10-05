@@ -9,5 +9,5 @@ v_size = size(Fv);
 assert(all(c_size == v_size), 'size of fluxes do not match')
 assert(length(c_size) == 2, 'Flux vector must be 2D')
 
-R = ( Fv(:,2:end) - Fv(:,1:end-1)) - (Fc(:,2:end) - Fc(:,end-1));
+R = ( Fv(:,2:end) - Fv(:,1:end-1)) - (Fc(:,2:end) - Fc(:,1:end-1));
 end
