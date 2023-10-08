@@ -13,10 +13,13 @@ while t<tend
     for j = 2:NJ+1
         fe = u(j)^2/2 + u(j+1)^2/2 - abs(1/2*(u(j) + u(j+1)))*(u(j+1) - u(j));
         fw = u(j-1)^2/2 + u(j)^2/2 - abs(1/2*(u(j-1) + u(j)))*(u(j) - u(j-1));
-        unew(j) = u(j) - dt/(2*dx) * (fe-fw) + nu*dt/dx^2*(u(j+1) + u(j-1) - 2*u(j));        
-        unew(1) = u(NJ+1);
-        unew(NJ+2) = u(2); 
+        fn(j) = fe-fw;
+        unew(j) = u(j) - dt/(2*dx) * (fe-fw) + nu*dt/dx^2*(u(j+1) + u(j-1) - 2*u(j));                 
     end
+    % Update periodic boundary conditions
+    unew(1) = unew(NJ+1);
+    unew(NJ+2) = unew(2);
+
     u = unew;
     t = t + dt;
 end

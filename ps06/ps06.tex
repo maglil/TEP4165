@@ -97,19 +97,37 @@ Thus finally we get (removing stars)
 \end{equation}
 
 \subsection{d)}
-Discribe discretization of equations EE and CS
+\begin{lstlisting}[language=python]
+# Find flux from using flux functions
+fc = fc(U)
+fv = fv(U)
+# Find fluxes at faces as average of cell values
+Fc = 1/2 (fc(n) + fc(n+1))
+Fv = 1/2 (fv(n) + fv(n+1))
+# Calculate U(n+1)
+Unew = U + dt/dx( (Fv(+1/2) - Fv(-1/2) - ( Fc(+1/2) - Fc(-1/2))
+\end{lstlisting}
 
 \subsection{e)}
-How to handle boundary conditions
+For every time step: at left boundary set all conserved U(1) equal U(2), for right boundary set density and pressure density at NJ equal to values at NJ-1, while the pressure is not changed from initial condition at $p_r$.
 
 \subsection{f)}
-Write a script that shows shock profile, test
+The script is included at the end of this document. Unfortunately, the results are not as expected and I did not have time to debug and identify the error(s) before the deadline.
 
 \subsection{g)}
-Compute at t = 100
+Not possible without working script 
 
 \subsection{h)}
-Test the two-norm of the density changes.
+Not possible without working script
+
+\lstinputlisting[language=matlab]{ps06.m}
+\lstinputlisting[language=matlab]{solve_fvm.m}
+\lstinputlisting[language=matlab]{timestep.m}
+\lstinputlisting[language=matlab]{residual_1DNS.m}
+\lstinputlisting[language=matlab]{flux_faces.m}
+\lstinputlisting[language=matlab]{ffc_1DNS.m}
+\lstinputlisting[language=matlab]{ffv_1DNS.m}
+\lstinputlisting[language=matlab]{rankine_hugoniot.m}
 
 
 \end{document}

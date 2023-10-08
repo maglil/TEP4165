@@ -4,9 +4,9 @@
 
 \begin{document}
 
-\section{Task 1}
-
 \maketitle{4}
+
+\section{Task 1}
 
 \subsection{a)}
 
@@ -16,8 +16,7 @@
 % Set current value to inital condition
 % While t < tend
 	% For j = 1 to NJ-1
-		% Calculate convective flux using upwind values
-			% Method to choose correct upwind direction
+		% Calculate convective flux using upwind  values
 		% Calculate diffusive flux using central difference
 		% Sum all fluxes
 		% Calculate new u using explicit euler
@@ -26,39 +25,64 @@
 \end{lstlisting}
 
 \subsection{b)}
-MUSCL approach
-
-Calculate left and right u values
-Use in minmod
+didn't have time :(
 
 \subsection{c)}
-The advantage of the MUSCL approach is that it is higher order and has less numerical dissipation while maintaining TVD.
+The advantage of the MUSCL approach is that it is higher order and has less numerical dissipation while still maintaining TVD.
 
 \section{Task 2}
 
 \subsection{a)}
+A function to solve the Burgers equation is shown below, as well as Roe's upwind method to calculate the fluxes. The script that calls the function is shown at the end
 
-\lstinputlisting[language=matlab]{upwind.m}
+\clearpage
+\newpage
+\lstinputlisting[language=matlab]{burgers.m}
+\lstinputlisting[language=matlab]{roe_upwind.m}
 
 \subsection{b)}
+Figure \ref{fig:ib} shows the results using Roe's upwind method for the invisicd Burgers equation. Because it looked interesting, I have also included a plot for times less than $0.1$ s where the formation of the shock is shown (see \ref{fig:shock})
+
 \begin{figure}
-	\includegraphics[widht=0.8\linewidth]{ps04-2b.png}
+	\centering
+	\includegraphics[width=0.7\linewidth]{ps04-2b.png}
+	\caption{Invisicid Burgers equation}
+	\label{fig:ib}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{ps04-2bsf.png}
+	\caption{Shock formation}
+	\label{fig:shock}
 \end{figure}
 
 \subsection{c)}
+Figure \ref{fig:b} shows the results using Roe's upwind method for the Burgers equation with viscosity $\nu = 0.02$. 
+
 \begin{figure}
-	\includegraphics[widht=0.8\linewidth]{ps04-2c.png}
+	\includegraphics[width=0.8\linewidth]{ps04-2c.png}
+	\caption{Burgers equation}
+	\label{fig:b}
 \end{figure}
 
 \subsection{d)}
-Compare solutions
+For the invisicid Burgers equation, the shock height is decreasing. I don't think this should be the case in reality, and might be an effect of the numerical viscosity. The shock is also propagating towards the left which I also wondering if could be a numerical affect. As pointed out in the next question, without analytical results it is hard to know if you are way off....
 
 \subsection{e}
-One way to check the solution is to check how the solution is dependent on the grid spacing.
+One way to check the solution is to check if the solution is dependent on the grid spacing. If it is not, this could indicated that the solution has converged (i.e not dependent on grid spacing). For other problems where the boundary condition should be at 'infinity' and not affect the solution, one can move the boundary condition and see if it affects the solution.
 
 \subsection{f)}
-Grid refinement
+Grid refinement - didn't have time :(
 
+\subsection{g}
+didn't have time :(
 
+\subsection{h}
+didn't have time :(
+
+\clearpage
+\newpage
+\lstinputlisting[language=matlab]{ps04.m}
 
 \end{document}
