@@ -9,12 +9,78 @@
 \section{Task 1}
 
 \subsection{a)}
-The term $\dfrac{\partial y}{\partial t}$ indicates that in the $y$-direction $u$ is convected in the positive $y$-direction, confer the advection equation with a positive convection velocity of 1,
+The term $\dfrac{\partial u}{\partial y}$ indicates that in the $y$-direction $u$ is convected in the positive $y$-direction, confer the advection equation with a positive convection velocity of 1,
 
 \begin{equation}
-\partial_t + \partial_y = 0
+\partial_t u + 1 \cdot \partial_y u = 0
 \end{equation}
 
-Since the conserved quantity is convected out of the $y=1$ plane, no boundary condition is necessary, the values at the boundary is determined by values at $y<1$.
+Since the conserved quantity is convected out of the $y=1$ plane, no boundary condition is necessary, the values at the boundary is determined by values at $y<1$. More specifcally the southern flux at the cells (i,NJ) are determined by the value of the flux in the cell (i.NJ)
+
+\subsection{b)}
+The linearized equation is
+
+\begin{equation}
+\partial_t u + a \partial_x u + \partial_y u = 0
+\end{equation}
+
+Applying the FVM and using the upwind discretization of the fluxes we get
+
+\begin{equation}
+\partial_t u = -( a(u_{i+1,j} - u{i,j}) + (u_{i,j+1} - u{i,j} )
+\end{equation}
+
+Inserting a fourier mode for u we end up with
+
+\begin{equation}
+\partial_t = - (\frac{a}{\Delta x} (\exp(ik\Delta x) -1) + \frac{1}{\Delta y} (\exp(ik\Delta y) -1)
+\end{equation}
+
+The first term on the right hand side are values on a circle centered at $-\frac{a}{\Delta x}$ with radius $\frac{a}{\Delta x} $. The maximum distance from the origin is thus $-2\frac{a}{\Delta x}$. Similar for the second term. The stability criterion for the explicit euler is to lie within a unit circle in the complex plane centered at $-1$. We thus get the stability criterion
+
+\begin{equation}
+\Delta t (2 \frac{a}{\Delta x} + 2\frac{1}{\Delta y} )\leq 2
+\end{equation}
+
+For $\Delta x = \Delta y$ this becomes
+
+\begin{equation}
+\Delta t \leq \frac{\Delta x}{1+a}
+\end{equation}
+
+Inital choice of $a=1$ was not stable for $N=50$ and $N=100$, so chose $a=2$
+
+
+
+
+\subsection{c)}
+
+\lstinputlisting[language=matlab]{ps07.m}
+\lstinputlisting[language=matlab]{solve_fvm_2Dscalar.m}
+\lstinputlisting[language=matlab]{upwind.m}
+\lstinputlisting[language=matlab]{charvel.m}
+
+\newpage
+\clearpage
+
+\subsection{d)}
+The figures below show the results for different grid sizes. The number of iterations necessary to reach steady stater were 125, 218 and 393. The solution approaches the analytic solution for higher number of grid points.
+
+\begin{figure}
+	\includegraphics[width=0.45\textwidth]{ps0725.png}
+	\includegraphics[width=0.45\textwidth]{ps0750.png}
+	\includegraphics[width=0.45\textwidth]{ps07100.png}
+\end{figure}
+
+\newpage
+\clearpage
+\subsection{e)}
+The figures below show the change in the 2-norm. The inital convergence is larger for fewer grid points and requires fewer iterations to reach the stopping criterion. Not sure what the oscillations that are more prominent for smaller grid sizes, represent.
+
+\begin{figure}
+	\includegraphics[width=0.45\textwidth]{du25.png}
+	\includegraphics[width=0.45\textwidth]{du50.png}
+	\includegraphics[width=0.45\textwidth]{du100.png}
+\end{figure}
 
 \end{document}
