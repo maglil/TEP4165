@@ -1,0 +1,53 @@
+\documentclass{article}
+\input{../tep4165-preamble}
+
+\begin{document}
+
+\maketitle{8}
+
+\section{Task 1}
+
+Starting with the heat equation
+
+\begin{equation}
+0 = \partial_x \kappa \partial_x T
+\end{equation}
+
+we integrate this equation over a finite volume resulting in
+
+\begin{equation}
+\label{eq:fvm_exact}
+0 = (\kappa \partial_x T)_w - (\kappa \partial_x T)_e = 0
+\end{equation}
+
+We have here assumed we are considering a volume of unit area cross-section. The partial derivatives at both faces is then approximated by central differences and multiply by the cell length, resulting in
+
+\begin{equation}
+0 = \kappa_w ( T_W - T_P ) - \kappa_e ( T_P - T_E )
+\end{equation}
+
+Assuming $\kappa$ constant this simplifies to
+
+\begin{equation}
+2 T_P - T_W - T_E = 0 
+\end{equation}
+
+i.e the coefficients are $a_P = 2$, $a_E = -1 $, $a_W = -1 $ for the interior grid points.
+
+\textbf{Boundary values}
+
+We have constant temperature at the boundary values. One way to deal with the boundary values would be to let the boundary be at a cell face and place a grid point at this location. When we approximate the western flux for (e.g.) the first (normal) grid point, we use the boundary value and the cell center value but the distance between these are half a cell length. We then end up with the modified equation for the first (normal) grid point
+
+\begin{equation}
+0 = 2\kappa ( T_W - T_P ) - \kappa ( T_P - T_E )
+\end{equation}
+
+resulting in
+
+\begin{equation}
+3 T_P - 2 T_W - T_E = 0 
+\end{equation}
+
+Similiar for the other boundary value.
+
+\end{document}
