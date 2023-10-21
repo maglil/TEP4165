@@ -50,4 +50,21 @@ resulting in
 
 Similiar for the other boundary value.
 
+\subsection{b)}
+The declartion module declares the different variables used in the program. The module procedure containes one subroutine solve which solves an algebraic equation iteratively. There is also a module that is commented out for solving a linear equation system. 
+
+The main program's stated goal is to solve the steady state heat equation. The main program calls the two(three) modules and calls to internal routines init and grid
+
+The init subroutine asks the user for numper of nodal points and max iterations. It then defines some material and system parameters as well as allocating and setting arrays.
+
+The grid subroutine defines the position of the grid points. The grid spacing is npi-2 since there are two special boundary value points. x_face(i) is the western face of grid point x(i).
+
+The main program then allocates the arrays for the FVM coefficients.
+
+The program then starts the main iteration loop to solve the algebraic equation. The loop first calls a subroutines bound() which sets the boundary values. It then calls Tcoeff which calculates thermal conductivities at cell faces as averages of cell center values (in case variable) and also uses a potentially variable area for calculation of the thermal conductivity. 
+
+In our case the thermal conducitivity cancels out since we don't have any source terms and can be simplified accordingly
+
+The main loop then calls solve to solve the algebraic equation iteratively.	
+
 \end{document}

@@ -62,6 +62,7 @@ end module procedure
 !****
 !
 !  contains
+
 !
 !
 !end module LES_solver
@@ -95,6 +96,7 @@ program simple
     call bound()
     call Tcoeff()
     call solve(T,Su,1,npi)
+	!call tdma(T,0, aW, aE, aP, 1, npi)
 
     if(mod(iter,200)==0)then
       write (*,*) 'iteration no:',iter,'  Temperatur:',T(npi/2)

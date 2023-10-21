@@ -25,11 +25,17 @@ subroutine TDMA(fi,b,aE,aW,aP,Istart,Iend)
 !---- Solving from east to west
 !
 !---- At the west boundary:
+	
+	 write(*,*) Istart
   Ath(Istart)=0.   
+   write(*,*) Istart
+  write(*,*) fi
   Cmth(Istart)=fi(Istart) 
 
 !---- Forward substitution
+
   do I=Istart+1,Iend-1 
+  
     Ath(I)=aE(I)/(aP(I)-aW(I)*Ath(I-1)) !eq. 7.6b
     Cth=b(I)   
     Cmth(I)=(aW(I)*Cmth(I-1)+Cth)/(aP(I)-aW(I)*Ath(I-1))
