@@ -158,10 +158,11 @@ subroutine init()
 
 !---Setting the constant thermal conductivity, ambient temperature and the radius and 
 !---perimeter of the bar (SI units):
-    !Tamb=
+    Tamb=290
     thermal_const=50.
     radius=0.01
     perim=pi*2*radius
+	h=80. ! heat loss coefficient
 
 !---- Initilising all other variables 
     do i=1,npi
@@ -249,8 +250,8 @@ subroutine Tcoeff()
       De=((thermal(i)+thermal(i+1))/(2*(x(i+1)-x(i))))*AREAe    
 
 !---- The source terms
-      !SP(i)=-h*perim*(x_face(i+1)-x_face(i))
-      !Su(i)=h*perim*(x_face(i+1)-x_face(i))*Tamb
+      SP(i)=-h*perim*(x_face(i+1)-x_face(i))
+      Su(i)=h*perim*(x_face(i+1)-x_face(i))*Tamb
 
 !---- The coefficients (central differencing sheme)----------------------
       aW(i)=Dw
