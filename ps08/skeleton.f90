@@ -56,16 +56,42 @@ end module procedure
 
 
 
-!module LES_solver
+module LES_solver
 !
 !**** This is a module where you put the TDMA routine (a solver for linear equation systems (LES)).
 !****
-!
-!  contains
 
 !
+  contains
+	subroutine TDMA(fi,b,aE,aW,aP,Istart,Iend)
+		implicit none
+		
+		double precision, dimension(:), intent(in out) :: fi
+		double precision, dimension(:), intent(in) :: b
+		double precision, dimension(:), intent(in) :: aE,aW,aP
+		integer, intent(in) :: Istart,Iend
+		
+		integer :: I
+		double precision, dimension(Iend) :: Ath, Cmth
+		double precision :: Cth
+		
+		Ath(Istart)=0.   
+		Cmth(Istart)=fi(Istart) 
+		
+		do I=Istart+1,Iend-1 
+  
+		Ath(I)=aE(I)/(aP(I)-aW(I)*Ath(I-1)) !eq. 7.6b
+		Cth=b(I)   
+		Cmth(I)=(aW(I)*Cmth(I-1)+Cth)/(aP(I)-aW(I)*Ath(I-1))
+		end do
+		do I=Iend-1,Istart+1,-1 
+			fi(I)=Ath(I)*fi(I+1)+Cmth(I)
+		end do  
+		
+	end subroutine TDMA
 !
-!end module LES_solver
+!
+end module LES_solver
 
 
 
@@ -84,7 +110,7 @@ program simple
 !
   use declarations
   use procedure
-  !use LES_solver
+  use LES_solver
   implicit none
   call init()
   call grid()
@@ -96,7 +122,7 @@ program simple
     call bound()
     call Tcoeff()
     call solve(T,Su,1,npi)
-	!call tdma(T,0, aW, aE, aP, 1, npi)
+	!call tdma(T,sU, aW, aE, aP, 1, npi)
 
     if(mod(iter,200)==0)then
       write (*,*) 'iteration no:',iter,'  Temperatur:',T(npi/2)
