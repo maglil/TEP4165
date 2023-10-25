@@ -17,10 +17,10 @@ we integrate this equation over a finite volume resulting in
 
 \begin{equation}
 \label{eq:fvm_exact}
-0 = (\kappa \partial_x T)_w - (\kappa \partial_x T)_e = 0
+0 = (\kappa \partial_x T)_w - (\kappa \partial_x T)_e
 \end{equation}
 
-We have here assumed we are considering a volume of unit area cross-section. The partial derivatives at both faces is then approximated by central differences and multiply by the cell length, resulting in
+We have here assumed we are considering a volume of unit area cross-section. The partial derivatives at both faces is then approximated by central differences. If we multiply by the cell length (assumed equidistant grid) this results in
 
 \begin{equation}
 0 = \kappa_w ( T_W - T_P ) - \kappa_e ( T_P - T_E )
@@ -29,14 +29,14 @@ We have here assumed we are considering a volume of unit area cross-section. The
 Assuming $\kappa$ constant this simplifies to
 
 \begin{equation}
-2 T_P - T_W - T_E = 0 
+2 T_P  =  T_W +  T_E  
 \end{equation}
 
-i.e the coefficients are $a_P = 2$, $a_E = -1 $, $a_W = -1 $ for the interior grid points.
+i.e the coefficients are $a_P = 2$, $a_E = 1 $, $a_W = 1 $ for the interior grid points (We can multipliy these with the thermal conductance $D = Ak/\Delta x$ to get the expressions used in the \texttt{skeleton.f90}.)
 
 \textbf{Boundary values}
 
-We have constant temperature at the boundary values. One way to deal with the boundary values would be to let the boundary be at a cell face and place a grid point at this location. When we approximate the western flux for (e.g.) the first (normal) grid point, we use the boundary value and the cell center value but the distance between these are half a cell length. We then end up with the modified equation for the first (normal) grid point
+We have constant temperature at the boundary values. One way to deal with the boundary values would be to let the boundary be at a cell face and place a grid point at this location, i.e. a distance $\Delta x/2$ from the previous point. When we approximate the western flux for (e.g.) the first (normal) grid point, we use the boundary value and the cell center value but the distance between these are half a cell length. We then end up with a modified equation for the first (normal) grid point
 
 \begin{equation}
 0 = 2\kappa ( T_W - T_P ) - \kappa ( T_P - T_E )
@@ -45,26 +45,103 @@ We have constant temperature at the boundary values. One way to deal with the bo
 resulting in
 
 \begin{equation}
-3 T_P - 2 T_W - T_E = 0 
+3 T_P =  2 T_W + T_E 
 \end{equation}
 
 Similiar for the other boundary value.
 
+(In retrospect after studying the code, it might have been better to keep the grid spacing as a  parameter here since it is varying at the boundary, as is done in skeleton.f90)
+
 \subsection{b)}
-The declartion module declares the different variables used in the program. The module procedure containes one subroutine solve which solves an algebraic equation iteratively. There is also a module that is commented out for solving a linear equation system. 
+The \texttt{declaration} module declares the different variables used in the program. The module \texttt{procedure} containes one subroutine \texttt{solve} which solves an algebraic equation iteratively. There is also a module \texttt{LES\_solver} that is commented out for solving a linear equation system, this is where the TDMA algorithm should be placed.
 
-The main program's stated goal is to solve the steady state heat equation. The main program calls the two(three) modules and calls to internal routines init and grid
+The main program's solves the steady state heat equation. The main program calls the two(three) modules and calls two external subroutines \texttt{init} and \texttt{grid}.
 
-The init subroutine asks the user for numper of nodal points and max iterations. It then defines some material and system parameters as well as allocating and setting arrays.
+The \texttt{init} subroutine asks the user for numper of grid points and max number of iterations. It then defines some material and system parameters as well as allocating and setting arrays.
 
-The grid subroutine defines the position of the grid points. The grid spacing is npi-2 since there are two special boundary value points. x_face(i) is the western face of grid point x(i).
+The \texttt{grid} subroutine defines the position of the grid points. The grid spacing is given by \texttt{npi-2} since there are two special boundary value points. \texttt{x\_face(i)} is the western face of grid point \texttt{x(i)}.
 
 The main program then allocates the arrays for the FVM coefficients.
 
-The program then starts the main iteration loop to solve the algebraic equation. The loop first calls a subroutines bound() which sets the boundary values. It then calls Tcoeff which calculates thermal conductivities at cell faces as averages of cell center values (in case variable) and also uses a potentially variable area for calculation of the thermal conductivity. 
+The program then starts the main iteration loop to solve the algebraic equation. The loop first calls a subroutines \texttt{bound()} which sets the boundary values. It then calls \texttt{Tcoeff} which calculates thermal conductivities at cell faces as averages of cell center values (in case variable) and also uses a potentially variable area for calculation of the thermal conductivity. It then sets the coefficients for the linear system to be solved.
 
-In our case the thermal conducitivity cancels out since we don't have any source terms and can be simplified accordingly
+The main loop then calls \texttt{solve} or (\texttt{tdma}) to solve the algebraic equation iteratively.	
 
-The main loop then calls solve to solve the algebraic equation iteratively.	
+\subsection{c}
+The fortran program is shown at the end of this file. For the present case the lines setting the source terms (253-254) where commented out. The steady state solution is shown in fig. \ref{fig:1c}. About 31000 iterations were needed for numerical convergence.
+
+\begin{figure}
+\includegraphics[width=0.65\textwidth]{ps08c.png}
+\caption{Problem 1c. Steady state temperature profile. Iterative solver}
+\label{fig:1c}
+\end{figure}
+
+\subsection{1d}
+from part a) we see that diagnoal terms are equal to 2 (for interior points), while the upper and lower diagnoals have -1. We therefore have
+
+\begin{equation}
+|a_{ii}| = \sum_{i\neq j} |a_{ij}|
+\end{equation}
+
+which satisfies diagonal dominance
+
+\begin{equation}
+|a_{ii}| \geq \sum_{i\neq j} |a_{ij}|
+\end{equation}
+
+\subsection{e}
+The implementation of the TDMA algorithm is shown in the end of the file. The TDMA algorithm was run by commenting out the iterative solver (line 125) and uncommenting the tdma solver (line 126). Only 1 iteration was then used. The resulting temperature distribution is shown in fig \ref{fig:1e}
+
+\begin{figure}
+\includegraphics[width=0.65\textwidth]{ps08e.png}
+\caption{Problem 1e. Steady state temperature profile. TDMA algorithm.}
+\label{fig:1e}
+\end{figure}
+
+\section{Task 2}
+
+\subsection{a)}
+THe source term is divided into a uniform and a temperatur dependent term. The uniform term is included on the right side of the equation while the temperature dependent term is included in the coefficient $a_p$.
+
+\subsection{b)}
+The source term which reperesents the uninsulated rod is uncommented (line 253-254). The results are shown in \ref{fig:2b}. We see that in the center of the rod the temperature drops towards the ambient temperature. At the the boundaries the temperature rises towards the constant temperature boundary conditions.
+
+\begin{figure}
+\includegraphics[width=0.65\textwidth]{ps082b.png}
+\caption{Problem 1e. Steady state temperature profile with source term. TDMA algorithm.}
+\label{fig:2b}
+\end{figure}
+
+\section{Task 3}
+
+\subsection{a)}
+The flux at the left boundary of the first interior grid point is zero, ie $a_w(2) = 0$.
+
+\subsection{b)}
+The adiabatic boundary condtion can be implemented by imposing a zero temperatur gradient. One way of doing this is to set $T_0 = T_1$. This was tried for the iterative method by uncommenting line 44 in the code. this resulted in the temperatur distribution shown in \ref{fig:3a1}.
+
+Another way would be to say that the flux at the western boundary should be zero, ie. by setting $a_w(2) = 0$. This was tried for the tdma algorithm, uncommenting line 268. But as shown in \ref{fig:3a2} did not yield the correct the result. I was not able to figure out the error.
+
+\begin{figure}
+\includegraphics[width=0.65\textwidth]{ps083a1.png}
+\caption{Problem 3a. Steady state temperature profile with source term and adiabatic boundary condition. Iterative algorithm.}
+\label{fig:3a1}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.65\textwidth]{ps083a2.png}
+\caption{Problem 3a. Steady state temperature profile with source term and adiabatic boundary condition. tdma algorithm.}
+\label{fig:3a2}
+\end{figure}
+
+\subsection{c)}
+Didn't have time :(
+
+\subsection{d)}
+Didn't have time :(
+
+\newpage
+
+\lstinputlisting[language=fortran]{skeleton.f90}
 
 \end{document}
