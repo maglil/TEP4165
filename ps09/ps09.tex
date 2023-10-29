@@ -1,0 +1,84 @@
+\documentclass{article}
+
+\include{../tep4165-preamble}
+
+\begin{document}
+\maketitle{9}
+
+\section{Task 1}
+
+\subsection{a)}
+% Discretize heat eq using FVM
+
+We start with the 1D heat equation
+
+\begin{equation}
+0 = \partial_x (k \partial_x T) + \partial_y( k \partial_y  T)
+\end{equation}
+
+Integrate this over a rectangular control volume, assuming no variation in the $z$-direction results in
+
+\begin{equation}
+0 = (k \partial_x T)_e A_e - (k \partial_x T)_w A_w + (k \partial_x T)_n A_n - (k \partial_x T)_e A_s
+\end{equation}
+
+Where $(k \partial_x T)_e = \frac{1}{A_e}\int_{\partial \Omega_e} k \partial_x T dA$, i.e. the average value over the eastern surface. Similarly for the other sides.
+
+The thermal conductivites and temperature derivatives are then approximated by cell center values. We use a central difference for the temperature to give.
+
+\begin{equation}
+0=k_e \frac{T_E - T_P}{\delta x_{PE} } A_e - k_w \frac{T_P - T_W}{\delta x_{WP} } A_w + k_n \frac{T_N - T_P}{\delta x_{PN} } A_n - k_s \frac{T_P - T_S}{\delta x_{SP} } A_s
+\end{equation}
+
+Now we group terms $T_i$ which results in
+
+\begin{equation}
+\left( \frac{k_e A_e}{\delta x_{PE}} + \frac{k_w A_w}{\delta x_{WP}} + \frac{k_n A_n}{\delta x_{PN}}  + \frac{k_s A_s}{\delta x_{SP}} \right) T_P = \frac{k_e A_e}{\delta x_{PE}} T_E + \frac{k_w A_w}{\delta x_{WP}} T_W + \frac{k_n A_n}{\delta x_{PN}} T_N + \frac{k_s A_s}{\delta x_{SP}} T_S
+\end{equation}
+
+which we then rewrite as
+
+\begin{equation}
+a_p T_P = a_E T_E + a_W T_W + a_N T_N + a_S T_S
+\end{equation}
+
+
+\subsection{b)}
+
+% Write fortran program. Gauss seidel. extend previous program
+
+\subsection{c)}
+
+% Plot T countours and comment
+
+\subsection{d)}
+
+% Change boundary conditions to heat flux
+
+\subsection{e)}
+
+% Change fortran code accordingly
+
+\subsection{f)}
+
+% Plot temperature contours
+
+\subsection{g)}
+
+% Grid refinement
+
+\subsection{h)}
+
+Alternating line Gauss-Seidel
+
+\subsection{i)}
+
+Multigrid method
+
+
+
+
+
+
+
+\end{document}
