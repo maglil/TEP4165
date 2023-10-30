@@ -46,10 +46,18 @@ a_p T_P = a_E T_E + a_W T_W + a_N T_N + a_S T_S
 \subsection{b)}
 
 % Write fortran program. Gauss seidel. extend previous program
+The fortran program that solves the 2D heat equation is shown at the end of document. Convergence took about 15000 iterations with the Gauss-Seidel method.
 
 \subsection{c)}
 
 % Plot T countours and comment
+Shows the temperature distribution. Temperature at center (average of four faces) was 449.99949 which is close to the expected value of 450 from the symmetry of the system.
+
+\begin{figure}
+\includegraphics[width= 0.7\textwidth]{ps09cT.png}
+\caption{Temperature distribution}
+\label{fig:tdist}
+\end{figure}
 
 \subsection{d)}
 
@@ -74,6 +82,8 @@ Alternating line Gauss-Seidel
 \subsection{i)}
 
 Multigrid method
+
+\lstinputlisting[language=fortran]{heat2d.f90}
 
 
 
