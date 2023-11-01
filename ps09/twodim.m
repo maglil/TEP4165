@@ -16,9 +16,10 @@ T=temperature';
 figure(1)
 surface(X,Y,T)
 view(2)
-% daspect([1 1 1])
+daspect([1 1 1])
 xlabel('x')
 ylabel('y')
+ylim([0,max(y)])
 title('Temperature')
 shading interp
 lighting phong

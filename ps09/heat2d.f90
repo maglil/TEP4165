@@ -11,7 +11,7 @@ module declarations
 	double precision,public :: xl, yl ! extent of simulation domain
 	
 	double precision,public, allocatable, dimension(:,:) :: aW,aE,aP,aN,aS
-	double precision,public, allocatable, dimension(:,:) :: T,thermal	! Temperature, thermal conductivity
+	double precision,public, allocatable, dimension(:,:) :: T,Told,diffT, thermal	! Temperature, thermal conductivity
 	double precision,public, allocatable, dimension(:,:) :: Sp,Su	
 	
 	double precision,public :: rho, Tamb, perim, thermal_const, h, q 
@@ -21,6 +21,8 @@ module declarations
 	integer,public :: iter,last,npi,npj
 	double precision, public :: norm0,norm1,dnorm0, n ! norms
 	double precision, public :: eps ! convergence criterion
+	
+	integer, public :: sys !Shift between different system parameters.
 	
 	
 	double precision, public :: norm
@@ -60,6 +62,8 @@ program heat2d
 	use procedures
 	implicit none
 	
+	sys = 2 ! 1 or 2 to switch between systems
+	
 	call init()
 	call grid()
 	
@@ -69,36 +73,36 @@ program heat2d
 	
 	call calc_norm()
 	norm0 = norm
+	write(*,*) norm0
 	
+	Told = T
 	do iter=1,last
-
+		
 		call Tcoeff()
 		call gauss_seidel(T,Su,1,npi,1,npj)
 		
+		! Alternating gauss seidel
+		! For each j
+		! b = 
+		!tdma(T,b
+		
 		if (iter==1) then
 			call calc_norm()
-			norm1 = norm
-			dnorm0 = norm1-norm0
-			write(*,*) norm1-norm0, 'first'
+			norm0 = norm
+			write(*,*) norm0, 'first'
 		end if
 		
 		if(mod(iter,200)==0)then
-			call calc_norm()
-			norm0 = norm1
-			norm1 = norm
-			write(*,*) (norm1-norm0)/dnorm0
+			call calc_norm()		
+			write(*,*) norm/norm0
 			write (*,*) 'iteration no:',iter,'  Temperatur:',(T(int((npi)/2),int((npj)/2))+T(int((npi)/2+1),int((npj)/2+1)))/2
-			if ((norm1-norm0)/dnorm0 < eps) then
+			if (norm/norm0 < eps) then
+				write(*,*) 'exiting'
 				exit
 			end if
 		end if
-		
-		
+		Told = T
 	end do
-	
-	if(mod(iter,200)==0)then
-      write (*,*) 'iteration no:',iter,'  Temperatur:',T(int(npi/2),int(npj/2))
-    end if
 	
 	call printout()
 end program
@@ -122,7 +126,7 @@ subroutine init()
     read(*,*) npj
     write(*,*) 'Here is the numbers:',npi, ' ', npj
 	
-	allocate(T(npi,npj),thermal(npi,npj),Su(npi,npj),Sp(npi,npj))
+	allocate(T(npi,npj),Told(npi,npj), diffT(npi, npj),thermal(npi,npj),Su(npi,npj),Sp(npi,npj))
 	
 !---Set number of iterations---
 	write(*,*) 'Set number of iterations:'
@@ -135,7 +139,7 @@ subroutine init()
 	height = 0.2
     !perim=pi*2*radius
 	h=80. ! heat loss coefficient
-	q = 100E3
+	q = 42E3
 	
 !---Initalize arrays (except coefficients)
 	do i=1,npi
@@ -143,7 +147,9 @@ subroutine init()
 		  thermal(i,j)=thermal_const !thermal conductivity
 		  SP(i,j)=0.
 		  Su(i,j)=0.
-		  T(i,j)=0.
+		  Told(i,j) = 0.
+		  diffT(i,j) = 0.
+		  T(i,j)=0. ! guess
 	  end do
     end do
 	
@@ -165,8 +171,8 @@ subroutine grid()
 	allocate(x(npi),x_face(npi),y(npj), y_face(npj))
 	
 !---Set physical extent
-	xl = 1
-	yl = 1
+	xl = 0.5
+	yl = 0.2
 	
 !---Size of cell
 	dx=xl/real(npi-2.)
@@ -209,15 +215,24 @@ subroutine bound()
 	implicit none
 	
 	integer :: i,j
-!---- Constant temp at each end of the bar
-	do j = 1,npj
-		T(1,j)=300.
-		T(npi,j) = 600.
-	end do
-	do i = 1,npi
-		T(i,1)=300.
-		T(i,npj) = 600.
-	end do
+!---- Problem a) Constant temp at faces.
+	if (sys==1) then
+		do j = 1,npj
+			T(1,j)=300.
+			T(npi,j) = 600.
+		end do
+		do i = 1,npi
+			T(i,1)=300.
+			T(i,npj) = 600.
+		end do
+	end if
+
+!---Problem d) southern, western faces insulated, northern fixed temperature, easter fixed flux
+	if (sys==2) then
+		do i = 1,npi
+			T(i,npj) = 400.
+		end do
+	end if
 
 end subroutine
 
@@ -255,8 +270,23 @@ subroutine Tcoeff()
 		aN(i,j) = Dn		
 		aP(i,j) = aW(i,j)+aE(i,j)+aS(i,j)+aN(i,j) + Sp(i,j)				
 		end do
-		
 	end do
+	
+	if (sys==2) then
+		do j = 2, npj-1
+			aW(2,j) = 0. ! Western insulated
+			Su(2,j) = 0.
+		end do
+		do i = 2, npi-1
+			aS(i,2) = 0. ! Southern insulated
+			Su(i,2) = 0.
+		end do
+		do j = 2, npj-1
+			aE(npi-1,j) = 0. !Eastern fixed flux
+			Su(npi-1,j) = q*dy
+		end do
+	end if
+	
 end subroutine
 
 subroutine calc_norm()
@@ -269,11 +299,12 @@ subroutine calc_norm()
 	!integer, intent(in) :: npi, npj
 	integer :: i,j
 	
+	diffT = T-Told
 	norm = 0;
 	
 	do i=2,npi-1
 		do j=2,npi-1
-			norm = norm + (T(i,j)**2)			
+			norm = norm + (diffT(i,j)**2)			
 		end do
 	end do	
 	norm = sqrt(dx*dy*norm)

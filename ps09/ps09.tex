@@ -19,6 +19,7 @@ We start with the 1D heat equation
 Integrate this over a rectangular control volume, assuming no variation in the $z$-direction results in
 
 \begin{equation}
+\label{eq:fvm}
 0 = (k \partial_x T)_e A_e - (k \partial_x T)_w A_w + (k \partial_x T)_n A_n - (k \partial_x T)_e A_s
 \end{equation}
 
@@ -39,6 +40,7 @@ Now we group terms $T_i$ which results in
 which we then rewrite as
 
 \begin{equation}
+\label{eq:patankar}
 a_p T_P = a_E T_E + a_W T_W + a_N T_N + a_S T_S
 \end{equation}
 
@@ -46,12 +48,12 @@ a_p T_P = a_E T_E + a_W T_W + a_N T_N + a_S T_S
 \subsection{b)}
 
 % Write fortran program. Gauss seidel. extend previous program
-The fortran program that solves the 2D heat equation is shown at the end of document. Convergence took about 15000 iterations with the Gauss-Seidel method.
+The fortran program that solves the 2D heat equation is shown at the end of document. For an inital guess of constant temperature $T_0 = 450$, 6000 iterations were needed for convergence (for $T_0 = 0$, about 10000 iterations were needed).
 
 \subsection{c)}
 
 % Plot T countours and comment
-Shows the temperature distribution. Temperature at center (average of four faces) was 449.99949 which is close to the expected value of 450 from the symmetry of the system.
+Figure \ref{fig:tdist} shows the temperature distribution. The temperature is as expected a gradual slope from the high to the low temperatures. 
 
 \begin{figure}
 \includegraphics[width= 0.7\textwidth]{ps09cT.png}
@@ -60,16 +62,42 @@ Shows the temperature distribution. Temperature at center (average of four faces
 \end{figure}
 
 \subsection{d)}
-
 % Change boundary conditions to heat flux
+When the boundary conditions change to a prescribed heat flux (equivalent to prescribed gradient of the temperature, i.e. von Neumann boundary conditions). The basic equation (\ref{eq:fvm}) in a) is the same for interior points and points next to a boundary with fixed temperatur (Dirichlet boundary condition). However, for boundary cells with prescribed heat flux through a surface, the appropriate flux term in (\ref{eq:fvm}) is replaced by the value given by the boundary condition. E.g. for our problem with a flux at the eastern boundary we get
+
+\begin{equation}
+\label{eq:fvm_vn}
+0 = q - (k \partial_x T)_w A_w + (k \partial_x T)_n A_n - (k \partial_x T)_e A_s
+\end{equation}
+
+We can rewrite this as (\ref{eq:patankar}) above
+
+\begin{equation}
+\label{eq:patankar}
+a_p T_P = a_E T_E + a_W T_W + a_N T_N + a_S T_S + S_u
+\end{equation}
+
+where for the cells next to the eastern boundary, $a_E = 0$ and $S_u = q$. The western and southern boundary nodes are treated similarly with $a_W = 0$ and $a_E= 0$, respectively and $q=0$
 
 \subsection{e)}
-
-% Change fortran code accordingly
+In the fortran code a parameter \texttt{sys} is added to switch between the different boundary conditions. The code is shown at the end of the document. The inital temperature was $T = 400$ and convergence took about 8000 iterations.
 
 \subsection{f)}
 
 % Plot temperature contours
+ The temperature distribution with the given heat flux is shown in fig. \ref{fig:3}. The temperature becomes very high so I suspect and error. I reduced the flux by a factor of 100 which resultet in the plot in fig.\ref{fig:emod} where the other boundary conditions are more apparent.
+
+\begin{figure}
+\includegraphics[width= 0.7\textwidth]{ps09eT.png}
+\caption{Temperature distribution}
+\label{fig:e}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width= 0.7\textwidth]{ps09eTmod.png}
+\caption{Temperature distribution}
+\label{fig:emod}
+\end{figure}
 
 \subsection{g)}
 
