@@ -1,0 +1,68 @@
+\documentclass{article}
+
+\input{../tep4165-preamble}
+
+\begin{document}
+
+\maketitle{10}
+
+\section{Task 1}
+
+\subsection{a)}
+
+The 2D energy equation for a convective flow including heat conduction is
+
+\begin{equation}
+\label{eq:energy2d}
+\partial_x{(\rho c_p T u)} + \partial_y{(\rho c_p T v)} = \partial_x(k\partial_x T) + \partial_y(k\partial_y T)
+\end{equation}
+
+We assume that $v=0$, i.e. only convection in the $u$-direction. We integrate the (\ref{eq:energy2d}) over a rectangular control volume with edges along coordinate axes and unit length in the $z$-direction.
+
+\begin{equation}
+\Delta y \left[ (\rho c_p Tu)_e - (\rho c_p Tu)_w \right]= \Delta y \left[(k\partial_x T)_e - (k \partial_x T)_w \right] + \Delta x \left[(k\partial_y T)_n - (k \partial_y T)_s \right]
+\end{equation}
+
+We approximate face values of $T$ by linear interpolation and derivatives by central differences to yield
+
+\begin{equation}
+F_e \frac{T_E + T_P}{2} - F_w \frac{T_P + T_W}{2} = D_e(T_E-T_P) - D_w(T_P-T_W) + D_n(T_N-T_P) - D_s(T_P-T_S).
+\end{equation}
+
+Where we have introduce $ F = \rho u A$ and $ D = \frac{k A}{c_p \delta x}$. Note $A = \Delta x \cdot 1$ and similarly for $\Delta y$. Now group terms with $T_i$
+
+\begin{equation}
+(F_e - F_w + D_e + D_w + D_n + D_s) T_P = (D_e - F_e) T_E + (D_w+F_w) T_w + D_n T_N - D_s T_P.
+\end{equation}
+
+The continutity equation is 
+
+\begin{equation}
+\partial_x \rho u = 0
+\end{equation}
+
+Integrating over a control volume we get
+
+\begin{equation}
+(\rho u)_e - (\rho u)_w  = F_e - F_w = 0
+\end{equation}
+
+We can therefore simplify to
+
+\begin{equation}
+(D_e + D_w + D_n + D_s) T_P = (D_e - F_e) T_E + (D_w+F_w) T_w + D_n T_N - D_s T_P.
+\end{equation}
+
+This holds for the interior points.
+
+\subsection{b)}
+
+For the left boundary we assume fixed temperature that extends to the left, thus the above equation can be used by just replacing $T_W = T_a$. This would place the boundary at $-\Delta x$. Alternatively we can just used the western flux and modifiy the delta x at the boundary.
+
+We will assume that at the right boundary we have von Neuman boundary conditions, i.e. no temperature gradient in the y-direction, indicating the the flow has reached a steady state. This can be checke by changing the length of the simulation domain and ensuring that temperature does not change at the initial right boundary.
+
+\subsection{c}
+
+Extend Fortran code
+
+\end{document}
