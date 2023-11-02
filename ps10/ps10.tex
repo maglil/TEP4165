@@ -57,9 +57,14 @@ This holds for the interior points.
 
 \subsection{b)}
 
+Western convective flux just use Ta directly. 
+For the diffusive flux use Ta but dx/2, same for souther and norhtern fluxes.
+
 For the left boundary we assume fixed temperature that extends to the left, thus the above equation can be used by just replacing $T_W = T_a$. This would place the boundary at $-\Delta x$. Alternatively we can just used the western flux and modifiy the delta x at the boundary.
 
 We will assume that at the right boundary we have von Neuman boundary conditions, i.e. no temperature gradient in the y-direction, indicating the the flow has reached a steady state. This can be checke by changing the length of the simulation domain and ensuring that temperature does not change at the initial right boundary.
+
+Ie Tb = TP
 
 \subsection{c}
 
