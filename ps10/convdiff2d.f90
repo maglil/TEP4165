@@ -28,10 +28,13 @@ program convdiff2d
 
 	use declarations
 	implicit none
-! set physical variables
 
-! initalize variables
+!---set physical variables
+	call system_params()
 
+!---initalize variables
+	call init()
+	
 ! define grid
 
 ! Boundary conditions
@@ -43,6 +46,20 @@ program convdiff2d
 write(*,*) 'Completed program'
 
 end program convdiff2d
+
+subroutine system_params()
+
+	use declarations
+	implicit none
+	
+!---Set physical quantities
+    thermal_const=50.
+	
+!---Define geometry
+    xl = 0.5
+	yl = 0.2
+
+end subroutine system_params
 
 subroutine init()
 	
