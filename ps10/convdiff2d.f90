@@ -39,6 +39,7 @@ program convdiff2d
 	call grid()
 
 ! Boundary conditions
+	call bound()
 
 
 ! Define equations system coefficients
@@ -139,3 +140,21 @@ subroutine grid()
     end do
 
 end subroutine grid
+
+subroutine bound()
+	
+	use declarations
+	implicit none
+	
+	integer :: i,j
+		
+	do j = 1,npj
+		T(1,j)=900. ! left boundary
+	end do
+	
+	do i = 1,npi
+		T(i,1)=250. ! Lower bondary
+		T(i,npj) = 250. ! Upper boundary
+	end do
+
+end subroutine bound
