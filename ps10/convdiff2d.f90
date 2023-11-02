@@ -35,7 +35,8 @@ program convdiff2d
 !---initalize variables
 	call init()
 	
-! define grid
+!---define grid
+	call grid()
 
 ! Boundary conditions
 
@@ -77,6 +78,7 @@ subroutine init()
 	
 !---Allocate dynamic arrays
 	allocate(T(npi,npj),Told(npi,npj), diffT(npi, npj),thermal(npi,npj))
+	allocate(aE(npi,npj),aW(npi,npj),aN(npi,npj), aS(npi,npj), aP(npi,npj))
 	
 !---Initalize arrays (except coefficients)
 	do i=1,npi
@@ -89,5 +91,51 @@ subroutine init()
 !---Set number of iterations---
 	write(*,*) 'Set number of iterations:'
     read(*,*) last
+	
+!---Set convergence criterion
+	eps = 1.0e-6
 
 end subroutine init
+
+subroutine grid()
+
+	use declarations
+    implicit none
+	
+    integer :: i,j
+    	
+	allocate(x(npi),x_face(npi),y(npj), y_face(npj))
+	
+	!---Size of cell
+	dx=xl/real(npi-2.)
+	dy=yl/real(npj-2.)
+	
+!---Set node coordinates
+	x(1)=0.
+    x(2)=0.5*dx
+    do i=3,npi-1
+      x(i)=x(i-1)+dx
+    end do
+    x(npi)=x(npi-1)+0.5*dy
+	
+	y(1)=0.
+    y(2)=0.5*dy
+    do i=3,npi-1
+      y(i)=y(i-1)+dy
+    end do
+    y(npj)=y(npj-1)+0.5*dy
+	
+!---Set face coordinates
+	x_face(1)=0.
+    x_face(2)=0.
+    do i=3,npi
+      x_face(i)=x_face(i-1)+dx
+    end do
+	
+	y_face(1)=0.
+    y_face(2)=0.
+    do i=3,npj
+      y_face(i)=y_face(i-1)+dy
+    end do
+
+end subroutine grid
