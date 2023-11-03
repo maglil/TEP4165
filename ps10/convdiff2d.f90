@@ -14,8 +14,9 @@ module declarations
 	double precision,public :: xl, yl ! Extent of simulation domain
 	integer,public :: npi,npj ! Number of nodes (cells + 2)
 
-	! Solution variables
+	! System variables
 	double precision,public, allocatable, dimension(:,:) :: T,Told,diffT, thermal	! Temperature, thermal conductivity
+	double precision,public, allocatable, dimension(:,:) :: Sp,Su
 	double precision,public, allocatable, dimension(:,:) :: aW,aE,aP,aN,aS ! Matrix coefficients
 
 	! Algoritmic parameters
@@ -24,9 +25,35 @@ module declarations
 
 end module
 
+module procedures
+! Procedures
+implicit none
+
+contains 
+	subroutine gauss_seidel(phi, b, istart, iend, jstart, jend) !do we need to pass in phi, if so shouldn aX's also be passed?
+	
+	use declarations
+	implicit none
+	
+	double precision,dimension(:,:), intent(in out) :: phi
+	double precision,dimension(:,:), intent(in) :: b
+	integer :: i, j
+	integer, intent(in) :: istart,iend, jstart, jend
+	
+	do i=istart+1,iend-1 !i start, iend refers to node grid. computer array also includes boundary conditions which are excluded. 
+		do j = jstart+1, jend-1
+			! gauss_seidel
+			phi(i,j) = (aE(i,j)*phi(i-1,j) + aW(i,j)*phi(i+1,j) + aS(i,j)*phi(i,j-1) + aN(i,j)*phi(i,j+1) + b(i,j))/aP(i,j)
+		end do
+	end do
+	
+	end subroutine
+end module
+
 program convdiff2d
 
 	use declarations
+	use procedures
 	implicit none
 
 !---set physical variables
@@ -44,6 +71,7 @@ program convdiff2d
 !---Solve system iteratively
 	do iter=1,last
 		call tcoeff()
+		call gauss_seidel(T,Su,1,npi,1,npj)
 	end do
 
 ! Define equations system coefficients
@@ -88,13 +116,16 @@ subroutine init()
 	
 !---Allocate dynamic arrays
 	allocate(T(npi,npj),Told(npi,npj), diffT(npi, npj),thermal(npi,npj))
+	allocate(Sp(npi,npj),Su(npi,npj))
 	allocate(aE(npi,npj),aW(npi,npj),aN(npi,npj), aS(npi,npj), aP(npi,npj))
 	
 !---Initalize arrays (except coefficients)
 	do i=1,npi
 		do j=1,npj
-		  !thermal(i,j)=thermal_const !thermal conductivity		  
+		  thermal(i,j)=thermal_const !thermal conductivity		  
 		  T(i,j)=0. ! guess
+		  Sp(i,j)=0.
+		  Su(i,j)=0.
 	  end do
     end do
 	
