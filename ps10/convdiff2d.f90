@@ -6,7 +6,7 @@ module declarations
 
 	private
 	! Physical variables
-	double precision,public :: rho, thermal_const, heat_cap
+	double precision,public :: rho, thermal_const, heat_cap, umax
 
 	! Geometric variables
 	double precision,public, allocatable, dimension(:) :: x, x_face, y, y_face ! x and y coordinates of nodes and cell faces. Left/south face same index.
@@ -38,9 +38,13 @@ program convdiff2d
 !---define grid
 	call grid()
 
-! Boundary conditions
+!---Set Boundary conditions
 	call bound()
 
+!---Solve system iteratively
+	do iter=1,last
+		call tcoeff()
+	end do
 
 ! Define equations system coefficients
 
@@ -55,11 +59,16 @@ subroutine system_params()
 	implicit none
 	
 !---Set physical quantities
-    thermal_const=50.
-	
+    thermal_const = 0.145
+	heat_cap = 2010
+	rho = 800
+
+!---System properties
+	umax = 0.05 
+
 !---Define geometry
-    xl = 0.5
-	yl = 0.2
+    xl = 100E-6
+	yl = 20e-6
 
 end subroutine system_params
 
@@ -70,7 +79,7 @@ subroutine init()
 	
 	integer :: i,j
 	
-!---Set number of nodal points and allocate arrays---
+!---Ask user for number of nodes---
 	write(*,*) 'Number of nodal points in the grid in x-direction:'
     read(*,*) npi
 	write(*,*) 'Number of nodal points in the grid in y-direction:'
@@ -119,7 +128,7 @@ subroutine grid()
     end do
     x(npi)=x(npi-1)+0.5*dy
 	
-	y(1)=0.
+	y(1)= -yl/2 ! y=0 at midpoint of y-range
     y(2)=0.5*dy
     do i=3,npi-1
       y(i)=y(i-1)+dy
@@ -158,3 +167,42 @@ subroutine bound()
 	end do
 
 end subroutine bound
+	
+subroutine tcoeff()
+	use declarations
+    implicit none
+	
+    integer :: i, j
+    double precision :: areaw,areae,arean,areas, Dw,De,Ds,Dn, Fe,Fw,Fs,Fn ,u , h
+	
+	! Cell face areas
+	! Assume length of slab is 1 m.
+	! Move inside loop if dy,dx variable
+	areaw = dy*1.
+	areae = areaw
+	areas = dx*1.
+	arean = areas
+	
+	do i = 2,npi-1
+		do j = 2, npj-1
+		! Diffusion coefficients k/c_p * A/dx
+		Dw = (thermal(i-1,j) + thermal(i,j))/2*(x(i) - x(i-1)) * areaw / heat_cap
+		De = (thermal(i+1,j) + thermal(i,j))/2*(x(i+1) - x(i)) * areae / heat_cap
+		Ds = (thermal(i,j-1) + thermal(i,j))/2*(y(j) - y(j-1)) * areas / heat_cap
+		Dn = (thermal(i,j+1) + thermal(i,j))/2*(y(j+1) - y(j)) * arean / heat_cap
+		
+		! Convection coefficient rho u A
+		h = yl/2.
+		u = umax*(1-y(j)**2/h**2)
+		Fe = rho * u * areae
+		Fw = rho * u * areaw
+		
+		! Set coefficients
+		aW(i,j) = Dw + Fw		
+		aE(i,j) = De - Fe
+		aS(i,j) = Ds
+		aN(i,j) = Dn		
+		aP(i,j) = aW(i,j)+aE(i,j)+aS(i,j)+aN(i,j)				
+		end do
+	end do
+end subroutine tcoeff
