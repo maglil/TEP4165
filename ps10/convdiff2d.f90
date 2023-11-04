@@ -97,7 +97,7 @@ subroutine system_params()
 	rho = 800
 
 !---System properties
-	umax = 0.! 0.05 
+	umax = -0.1! 0.05 
 
 !---Define geometry
     xl = 100E-6
@@ -235,14 +235,14 @@ subroutine tcoeff()
 		Fw = rho * u * areaw
 		
 		! Set coefficients
-		aW(i,j) = Dw + Fw		
-		aE(i,j) = De - Fe
+		aW(i,j) = Dw + Fw/2		
+		aE(i,j) = De - Fe/2
 		aS(i,j) = Ds
 		aN(i,j) = Dn		
 		aP(i,j) = aW(i,j)+aE(i,j)+aS(i,j)+aN(i,j)			
 		end do
 		!write(*,*) Dw, De, Dn, Ds, Fw, Fe
-		
+		!write(*,*) Dw/De
 	end do
 	
 	
@@ -262,12 +262,13 @@ subroutine tcoeff()
 		Fe = rho * u * areae
 		Fw = rho * u * areaw
 				
-		Su(i,j) = Fw*T(1,j)
-		aW(i,j) = Dw
-		aE(i,j) = De - Fe
+		Su(i,j) = (Dw + Fw)*T(1,j)
+		!aW(i,j) = Dw
+		aE(i,j) = De - Fe/2
 		aS(i,j) = Ds
 		aN(i,j) = Dn		
-		aP(i,j) = aW(i,j)+aE(i,j)+aS(i,j)+aN(i,j)
+		!aP(i,j) = aW(i,j)+aE(i,j)+aS(i,j)+aN(i,j)
+		aP(i,j) = (Dw + Fw)+ aE(i,j)+aS(i,j)+aN(i,j)
 	end do
 	
 	! Right boundary
