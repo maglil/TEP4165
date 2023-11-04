@@ -74,6 +74,10 @@ program convdiff2d
 !---Solve system iteratively
 	do iter=1,last		
 		call gauss_seidel(T,Su,1,npi,1,npj)
+		
+		if(mod(iter,200)==0)then			
+			write (*,*) 'iteration no:',iter,'  Temperatur:',(T(int((npi)/2),int((npj)/2))+T(int((npi)/2+1),int((npj)/2+1)))/2			
+		end if
 	end do
 
 	call printout()
@@ -92,7 +96,7 @@ subroutine system_params()
 	rho = 800
 
 !---System properties
-	umax = 0.05 
+	umax = 0.! 0.05 
 
 !---Define geometry
     xl = 100E-6
@@ -146,7 +150,7 @@ subroutine grid()
     integer :: i,j
     	
 	allocate(x(npi),x_face(npi),y(npj), y_face(npj))
-	
+
 	!---Size of cell
 	dx=xl/real(npi-2.)
 	dy=yl/real(npj-2.)
@@ -160,10 +164,11 @@ subroutine grid()
     x(npi)=x(npi-1)+0.5*dy
 	
 	y(1)= -yl/2 ! y=0 at midpoint of y-range
-    y(2)=0.5*dy
-    do i=3,npi-1
-      y(i)=y(i-1)+dy
+    y(2)= y(1) + 0.5*dy
+    do j=3,npj-1
+      y(j)=y(j-1)+dy
     end do
+	
     y(npj)=y(npj-1)+0.5*dy
 	
 !---Set face coordinates
@@ -214,15 +219,13 @@ subroutine tcoeff()
 	areas = dx*1.
 	arean = areas
 	
-	do i = 2,npi-1
+	do i = 3,npi-1
 		do j = 2, npj-1
 		! Diffusion coefficients k/c_p * A/dx
 		Dw = (thermal(i-1,j) + thermal(i,j))/(2*(x(i) - x(i-1))) * areaw / heat_cap
 		De = (thermal(i+1,j) + thermal(i,j))/(2*(x(i+1) - x(i))) * areae / heat_cap
 		Ds = (thermal(i,j-1) + thermal(i,j))/(2*(y(j) - y(j-1))) * areas / heat_cap
-		Dn = (thermal(i,j+1) + thermal(i,j))/(2*(y(j+1) - y(j))) * arean / heat_cap
-		
-		write(*,*) Dw, areaw
+		Dn = (thermal(i,j+1) + thermal(i,j))/(2*(y(j+1) - y(j))) * arean / heat_cap			
 		
 		! Convection coefficient rho u A
 		h = yl/2.
@@ -235,7 +238,34 @@ subroutine tcoeff()
 		aE(i,j) = De - Fe
 		aS(i,j) = Ds
 		aN(i,j) = Dn		
-		aP(i,j) = aW(i,j)+aE(i,j)+aS(i,j)+aN(i,j)				
+		aP(i,j) = aW(i,j)+aE(i,j)+aS(i,j)+aN(i,j)			
 		end do
+		!write(*,*) Dw, De, Dn, Ds, Fw, Fe
+		
+	end do
+	
+	
+	! Left boundary condition, i = 2
+	do j=2,npj-1
+		i = 2
+		! Diffusion coefficients k/c_p * A/dx
+		Dw = (thermal(i-1,j) + thermal(i,j))/(2*(x(i) - x(i-1))) * areaw / heat_cap
+		De = (thermal(i+1,j) + thermal(i,j))/(2*(x(i+1) - x(i))) * areae / heat_cap
+		Ds = (thermal(i,j-1) + thermal(i,j))/(2*(y(j) - y(j-1))) * areas / heat_cap
+		Dn = (thermal(i,j+1) + thermal(i,j))/(2*(y(j+1) - y(j))) * arean / heat_cap		
+		
+		! Convection coefficient rho u A
+		h = yl/2.
+		u = umax*(1-y(j)**2/h**2)
+		
+		Fe = rho * u * areae
+		Fw = rho * u * areaw
+				
+		Su(i,j) = Fw*T(1,j)
+		aW(i,j) = Dw
+		aE(i,j) = De - Fe
+		aS(i,j) = Ds
+		aN(i,j) = Dn		
+		aP(i,j) = aW(i,j)+aE(i,j)+aS(i,j)+aN(i,j)
 	end do
 end subroutine tcoeff
