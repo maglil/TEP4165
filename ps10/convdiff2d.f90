@@ -68,15 +68,15 @@ program convdiff2d
 !---Set Boundary conditions
 	call bound()
 
+!---Set linear system coefficients
+	call tcoeff() ! Place inside loop if linearized nonlinear propblem
+	
 !---Solve system iteratively
-	do iter=1,last
-		call tcoeff()
+	do iter=1,last		
 		call gauss_seidel(T,Su,1,npi,1,npj)
 	end do
 
-! Define equations system coefficients
-
-! Solve linear system
+	call printout()
 write(*,*) 'Completed program'
 
 end program convdiff2d
@@ -194,7 +194,7 @@ subroutine bound()
 	
 	do i = 1,npi
 		T(i,1)=250. ! Lower bondary
-		T(i,npj) = 250. ! Upper boundary
+		T(i,npj) = 450. ! Upper boundary
 	end do
 
 end subroutine bound
@@ -217,10 +217,12 @@ subroutine tcoeff()
 	do i = 2,npi-1
 		do j = 2, npj-1
 		! Diffusion coefficients k/c_p * A/dx
-		Dw = (thermal(i-1,j) + thermal(i,j))/2*(x(i) - x(i-1)) * areaw / heat_cap
-		De = (thermal(i+1,j) + thermal(i,j))/2*(x(i+1) - x(i)) * areae / heat_cap
-		Ds = (thermal(i,j-1) + thermal(i,j))/2*(y(j) - y(j-1)) * areas / heat_cap
-		Dn = (thermal(i,j+1) + thermal(i,j))/2*(y(j+1) - y(j)) * arean / heat_cap
+		Dw = (thermal(i-1,j) + thermal(i,j))/(2*(x(i) - x(i-1))) * areaw / heat_cap
+		De = (thermal(i+1,j) + thermal(i,j))/(2*(x(i+1) - x(i))) * areae / heat_cap
+		Ds = (thermal(i,j-1) + thermal(i,j))/(2*(y(j) - y(j-1))) * areas / heat_cap
+		Dn = (thermal(i,j+1) + thermal(i,j))/(2*(y(j+1) - y(j))) * arean / heat_cap
+		
+		write(*,*) Dw, areaw
 		
 		! Convection coefficient rho u A
 		h = yl/2.
