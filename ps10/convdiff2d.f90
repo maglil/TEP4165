@@ -69,10 +69,11 @@ program convdiff2d
 	call bound()
 
 !---Set linear system coefficients
-	call tcoeff() ! Place inside loop if linearized nonlinear propblem
+	 ! Place inside loop if linearized nonlinear propblem
 	
 !---Solve system iteratively
 	do iter=1,last		
+		call tcoeff()
 		call gauss_seidel(T,Su,1,npi,1,npj)
 		
 		if(mod(iter,200)==0)then			
@@ -267,5 +268,11 @@ subroutine tcoeff()
 		aS(i,j) = Ds
 		aN(i,j) = Dn		
 		aP(i,j) = aW(i,j)+aE(i,j)+aS(i,j)+aN(i,j)
+	end do
+	
+	! Right boundary
+	do j=2,npj-1
+		i = npi
+		T(i,j) = T(i-1,j)
 	end do
 end subroutine tcoeff
