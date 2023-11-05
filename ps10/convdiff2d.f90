@@ -97,7 +97,7 @@ subroutine system_params()
 	rho = 800
 
 !---System properties
-	umax = 0.1! 0.05 
+	umax = 0.05 
 
 !---Define geometry
     xl = 100E-6
