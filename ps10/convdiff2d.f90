@@ -118,8 +118,8 @@ subroutine system_params()
 	rho = 800
 
 !---System properties
-	umax = 0.09
-	umax = 0.0902*2. 
+	umax = 0.05
+	!umax = 0.0902*2. !0.0902 is maximum with local Peclet number < 2
 	
 !---Define geometry
     xl = 100E-6

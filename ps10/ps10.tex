@@ -68,6 +68,22 @@ Ie Tb = TP
 
 \subsection{c}
 
-Extend Fortran code
+The numerical solution to the system was determined using the code shown at the end of this document. The steady state temperature distribution is shown in figure \ref{fig:temp-c}. We see that at the right half, the temperature gradient is small which indicates that our approximation of zero temperatur flux at this side seems valid. The high temperature at the inlet is convected by the parabolic velocity distribution but is gradually decreased as the thermal energy is diffused to the lower boundary. At the right side we have a consant temperature gradient  and heat flux from the upper to the lower plate.
+
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{ps10c3d.png}
+\caption{Temperature distribution with $u=0.05$ m/s.}
+\label{fig:temp-c}
+\end{figure}
+
+\subsection{d)}
+Figure \ref{fig:nusselt-d} shows the nusselt number for the two walls (sign has been flipped for one for ease of comparison). As can be seen from the figure, the nusselt number is initally high, implying that the convective convective flux is high due to the heat from the high temperature inlet being convected down the pipe. Further down, the effect of the high temperature inlet is reduced and the temperature flux is primarily due to diffusion, resulting in a low Nusselt number.
+
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{ps10d_nusselt.png}
+\caption{Nusselt number at $u=0.05$ m/s.}
+\label{fig:nusselt-d}
+\end{figure}
+
 
 \end{document}
