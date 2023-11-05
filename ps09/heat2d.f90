@@ -48,6 +48,7 @@ contains
 		do j = jstart+1, jend-1
 			! gauss_seidel
 			phi(i,j) = (aE(i,j)*phi(i-1,j) + aW(i,j)*phi(i+1,j) + aS(i,j)*phi(i,j-1) + aN(i,j)*phi(i,j+1) + b(i,j))/aP(i,j)
+			! error above! aE and aE are coupled to wrong phi
 		end do
 	end do
 	

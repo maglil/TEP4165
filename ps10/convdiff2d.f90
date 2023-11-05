@@ -15,13 +15,19 @@ module declarations
 	integer,public :: npi,npj ! Number of nodes (cells + 2)
 
 	! System variables
-	double precision,public, allocatable, dimension(:,:) :: T,Told,diffT, thermal	! Temperature, thermal conductivity
+	double precision,public, allocatable, dimension(:,:) :: T,Tprev,diffT, thermal	! Temperature, thermal conductivity
 	double precision,public, allocatable, dimension(:,:) :: Sp,Su
 	double precision,public, allocatable, dimension(:,:) :: aW,aE,aP,aN,aS ! Matrix coefficients
+	
+	! Flow characteristics
+	double precision, public, allocatable, dimension(:) :: nuTop, nuBottom
 
 	! Algoritmic parameters
 	integer,public :: iter,last
+	double precision, public :: norm, norm0 ! norms
+	double precision, public, allocatable, dimension(:) :: norms
 	double precision, public :: eps ! convergence criterion
+	
 
 end module
 
@@ -67,20 +73,35 @@ program convdiff2d
 
 !---Set Boundary conditions
 	call bound()
-
-!---Set linear system coefficients
-	 ! Place inside loop if linearized nonlinear propblem
 	
 !---Solve system iteratively
 	do iter=1,last		
+		Tprev = T
 		call tcoeff()
 		call gauss_seidel(T,Su,1,npi,1,npj)
 		
+		if(iter == 1) then
+			call calc_norm()
+			norm0 = norm
+		end if
+		
+		! For diagnosis
+		call calc_norm()
+		norms(iter) = norm
+		
 		if(mod(iter,200)==0)then			
-			write (*,*) 'iteration no:',iter,'  Temperatur:',(T(int((npi)/2),int((npj)/2))+T(int((npi)/2+1),int((npj)/2+1)))/2			
+			write (*,*) 'iteration no:',iter,'  Temperatur:',(T(int((npi)/2),int((npj)/2))+T(int((npi)/2+1),int((npj)/2+1)))/2	
+			call calc_norm()
+			write(*,*) norm, norm0, norm/norm0
+			if (norm/norm0 < eps) then
+				write(*,*) 'converged, exiting'
+				exit
+			end if
 		end if
 	end do
 
+	call nusselt()
+	
 	call printout()
 write(*,*) 'Completed program'
 
@@ -97,8 +118,9 @@ subroutine system_params()
 	rho = 800
 
 !---System properties
-	umax = 0.05 
-
+	umax = 0.09
+	umax = 0.0902*2. 
+	
 !---Define geometry
     xl = 100E-6
 	yl = 20e-6
@@ -117,18 +139,19 @@ subroutine init()
     read(*,*) npi
 	write(*,*) 'Number of nodal points in the grid in y-direction:'
     read(*,*) npj
-    write(*,*) 'Here is the numbers:',npi, ' ', npj
+    write(*,*) 'Here are the numbers:',npi, ' ', npj
 	
 !---Allocate dynamic arrays
-	allocate(T(npi,npj),Told(npi,npj), diffT(npi, npj),thermal(npi,npj))
+	allocate(T(npi,npj),Tprev(npi,npj), diffT(npi, npj),thermal(npi,npj))
 	allocate(Sp(npi,npj),Su(npi,npj))
-	allocate(aE(npi,npj),aW(npi,npj),aN(npi,npj), aS(npi,npj), aP(npi,npj))
+	allocate(aE(npi,npj),aW(npi,npj),aN(npi,npj), aS(npi,npj), aP(npi,npj))	
 	
+	write(*,*) size(norms)
 !---Initalize arrays (except coefficients)
 	do i=1,npi
 		do j=1,npj
 		  thermal(i,j)=thermal_const !thermal conductivity		  
-		  T(i,j)=0. ! guess
+		  T(i,j)=300. ! guess
 		  Sp(i,j)=0.
 		  Su(i,j)=0.
 	  end do
@@ -138,8 +161,11 @@ subroutine init()
 	write(*,*) 'Set number of iterations:'
     read(*,*) last
 	
+!---Allocate array of norms
+allocate(norms(last))
+	
 !---Set convergence criterion
-	eps = 1.0e-6
+	eps = 1.0e-3
 
 end subroutine init
 
@@ -279,5 +305,41 @@ subroutine tcoeff()
 		T(i,j) = T(i-1,j)
 	end do
 	
-	
 end subroutine tcoeff
+
+subroutine calc_norm()
+
+	use declarations
+	implicit none
+	
+	integer :: i,j
+	
+	diffT = T-Tprev
+	norm = 0;
+	
+	do i=2,npi-1
+		do j=2,npi-1
+			norm = norm + (diffT(i,j)**2)			
+		end do
+	end do	
+	norm = sqrt(dx*dy*norm)
+	return
+	
+end subroutine calc_norm
+
+subroutine nusselt()
+
+	use declarations
+	implicit none
+	
+	integer :: i
+	
+	allocate(nuTop(npi),nuBottom(npi))
+	
+	! Calculate nusselt numbers
+	do i = 1,npi		
+		nuTop(i) = -yl*(T(i,npj) - T(i,npj-1))/(y(npj)-y(npj-1)) / (thermal_const*(T(i,npj)-T(i,1)))
+		nuBottom(i) = yl*(T(i,2) - T(i,1))/(y(2)-y(1)) / (thermal_const*(T(i,npj)-T(i,1)))
+	end do
+	
+end subroutine nusselt

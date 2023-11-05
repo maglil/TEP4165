@@ -9,6 +9,8 @@ clc
 load 'temperature.dat'
 load 'x.dat'
 load 'y.dat'
+load 'nusselt.dat'
+load 'norms.dat'
 %---Plot the temperature
 T=temperature';
 [X,Y] = meshgrid(x,y);
@@ -30,3 +32,13 @@ surfc(X,Y,T)
 xlabel('x')
 ylabel('y')
 zlabel('T')
+
+figure(3)
+plot(x(2:end-1),nusselt(2:end-1,1), x(2:end-1),nusselt(2:end-1,2), 'LineWidth', 1)
+legend('Top wall', 'Bottom wall')
+xlabel('x')
+ylabel('Nusselt no.')
+title('Nusselt number along wall')
+
+figure(4)
+semilogy(0:1:length(norms)-1, norms, 'LineWidth', 1)

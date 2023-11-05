@@ -6,7 +6,6 @@ subroutine printout()
     implicit none
     integer :: i, j
 
-
     open(10,file='temperature.dat',status='unknown')
     do i=1,npi
     	write(10, '(*(F10.3 : ", "))') (T(i,j), j=1,npj)
@@ -24,5 +23,17 @@ subroutine printout()
       write(12,*) y(i)
     end do  
     close(12)
+	
+	open(13,file='nusselt.dat',status='unknown')
+    do i=1,npi
+      write(13,*) nuTop(i), nuBottom(i)
+    end do  
+    close(13)
+	
+	open(14,file='norms.dat',status='unknown')
+    do i=1,last
+      write(14,*) norms(i)
+    end do  
+    close(14)
 
 end subroutine printout
