@@ -66,7 +66,7 @@ We will assume that at the right boundary we have von Neuman boundary conditions
 
 Ie Tb = TP
 
-\subsection{c}
+\subsection{c)}
 
 The numerical solution to the system was determined using the code shown at the end of this document. The steady state temperature distribution is shown in figure \ref{fig:temp-c}. We see that at the right half, the temperature gradient is small which indicates that our approximation of zero temperatur flux at this side seems valid. The high temperature at the inlet is convected by the parabolic velocity distribution but is gradually decreased as the thermal energy is diffused to the lower boundary. At the right side we have a consant temperature gradient  and heat flux from the upper to the lower plate.
 
@@ -79,11 +79,113 @@ The numerical solution to the system was determined using the code shown at the 
 \subsection{d)}
 Figure \ref{fig:nusselt-d} shows the nusselt number for the two walls (sign has been flipped for one for ease of comparison). As can be seen from the figure, the nusselt number is initally high, implying that the convective convective flux is high due to the heat from the high temperature inlet being convected down the pipe. Further down, the effect of the high temperature inlet is reduced and the temperature flux is primarily due to diffusion, resulting in a low Nusselt number.
 
+The bottom wall has slightly higher Nusselt number initally which might be to a larger temperatur difference between the hot fluid being convected from the left boundary and the wall surface temperature.
+
 \begin{figure}
 \includegraphics[width=0.7\textwidth]{ps10d_nusselt.png}
 \caption{Nusselt number at $u=0.05$ m/s.}
 \label{fig:nusselt-d}
 \end{figure}
 
+\subsection{e)}
+I used $T=300$ K as an inital guess. Figure \ref{fig:conv-e} shows the convergence behavior by plotting the norm for every iteration. The system oddly seems to have reached an exact solution to the numerical problem as after about 200 iterations. The change in norm from the inital iterations was only about $10^{-3}$.
 
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{ps10conv05.png}
+\caption{Convergence behavior at $u=0.05$ m/s.}
+\label{fig:conv-e}
+\end{figure}
+
+\subsection{f)}
+Figure \ref{fig:temp-f} shows the temperature distribution for $u=0.09$ m/s. As can be seen in comparison with \ref{fig:temp-c} the effect of the velocity profile and convected heat from the inlet can be seen all the way to the right boundary. This might also indicate that the right boundary should have been further away in this situation to avoid that the imposed zero flux condition on the right boundary affects the flow.
+
+Figure \ref{fig:nussel-f} shows the nusselt number as function of position for $u=0.09$. Again, in comparison with \ref{fig:nussel-f} we can see that the nusselt number is slightly higher which in accordance with the convected heat being larger compared to the difffused heat as the velocity is higher.
+
+Figure \ref{fig:conv-f} shows the convergence behavior at $u=0.09$. The method seems to converge after 150 iterations, even faster than for $u=0.05$ m/s which again seems somewaht surprising. 
+
+
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{ps10f3d.png}
+\caption{Temperature distribution with $u=0.09$ m/s.}
+\label{fig:temp-f}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{ps10f_nusselt.png}
+\caption{Nusselt number at $u=0.09$ m/s.}
+\label{fig:nusselt-f}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{ps10conv09.png}
+\caption{Convergence behavior at $u=0.09$ m/s.}
+\label{fig:conv-f}
+\end{figure}
+
+\subsection{g)}
+To ensure diagonal dominance of the linear system (and thereby convergence of the iterative methods) we must have that the cell Peclet number satisfies
+
+\begin{equation}
+|Pe| < 2
+\end{equation}
+
+The cell Peclet number is given by
+
+\begin{equation}
+Pe = \frac{\rho u \delta x}{\Gamma}
+\end{equation}
+
+where for heat diffusion $\Gamma = k/c_p$. Solving for $u$ we find
+
+\begin{equation}
+u = \frac{Pe \cdot  k}{\rho c_p \delta x} = \frac{2\cdot \SI{0.145}{\watt\per(\meter\kelvin)}}{\SI{800}{\kilo\gram\per\meter^3} \cdot \SI{2010}{\joule\per(\kilo\gram\kelvin)} \cdot \SI{2e-6}{\meter}} = 0.0902
+\end{equation}
+
+where we have used $\delta x = L_x/50 = \SI{100}{\micro\meter}/50 = \SI{2e-6}{\meter}$. Hence for $u>0.0902$ the method might not be reliable.
+
+\subsection{h)}
+Figures \ref{fig:temp-h} shows the temperature distribution for 1, 2 and 3 times $u_max = 0.0902$ m/s. We can see how the convected heat from the left boundary is convected further down the stream. Having the right boundary with zero gradient looks more and more dubious. 
+
+Figures \ref{fig:conv-h} shows the convergence behavior. For 2 times $u_max$ the convergence seems even faster but for 3 times there seems to be a bump where it almost starts to diverge. I also tried 4 times and then the output file only gave asterisks (to large value to print) which indicates that the solution is diverging.
+
+\begin{figure}
+\includegraphics[width=0.3\textwidth]{ps10h1.png}
+\includegraphics[width=0.3\textwidth]{ps10h2.png}
+\includegraphics[width=0.3\textwidth]{ps10h3.png}
+\caption{Temperature distribution with 1, 2 and 3 times  $u_{max}=0.0902$ m/s.}
+\label{fig:temp-h}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.3\textwidth]{ps10convh1.png}
+\includegraphics[width=0.3\textwidth]{ps10convh2.png}
+\includegraphics[width=0.3\textwidth]{ps10convh3.png}
+\caption{Convergence behavior for 1, 2 and 3 times  $u_{max}=0.0902$ m/s.}
+\label{fig:conv-h}
+\end{figure}
+
+\subsection{g)}
+
+Figure \ref{fig:temp-g} shows the temperature distribution for the refined grid while \ref{fig:conv-g} shows the convergence behavior. Compared to \ref{fig:conv-e} the convergence takes 3-4 times as long. 
+
+The grid has been refined by a factor of 2 and therefore $u_max$ increases by a factor of 2.
+
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{ps10g.png}
+\caption{Temperature distribution with $u=0.05$ m/s. Refined grid}
+\label{fig:temp-g}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{ps10convg.png}
+\caption{Convergence behavior at $u=0.05$ m/s. Refined grid}
+\label{fig:conv-g}
+\end{figure}
+
+\newpage
+\lstinputlisting[language=fortran]{convdiff2d.f90}
+\newpage
+\lstinputlisting[language=fortran]{printout.f90}
+\newpage
+\lstinputlisting[language=matlab]{twodim.m}
 \end{document}

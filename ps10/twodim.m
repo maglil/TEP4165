@@ -42,3 +42,6 @@ title('Nusselt number along wall')
 
 figure(4)
 semilogy(0:1:length(norms)-1, norms, 'LineWidth', 1)
+xlabel('Iterations')
+ylabel('2-norm')
+title('Convergence behavior, u=0.05 m/s. Refined grid')
