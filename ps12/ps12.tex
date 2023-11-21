@@ -1,40 +1,86 @@
 \documentclass{article}
 
 \input{../tep4165-preamble}
+
 \begin{document}
 
-\begin{figure}
-\includegraphics[width=0.7\textwidth]{elbow5.png}
-\end{figure}•
+\maketitle{12 - Temperature distribution in a mixing elbow}
 
-\section{Task 1}
-% Figures 5,6,8,10 optional 11, 19, 12
-
-\subsection{a)}
-%What are the equations
-
-\subsection{b)}
-%Why turbulence model
-The inlet flow has a Reynolds number of 50800. For pipe flow, 2300 is usually reported as a limit for when turbulence flow occurs.
+\section{Introduction}
+This report presents a numerical analysis of a mixing elbow\footnote{References to specific questions in the assignment are shown as margin notes for ease of reference. References to figure number in the tutorial are noted in the figure texts.}. Temperature distributions are presented together with a comparison of different solver methods. The geometry of the system is shown in fig. \ref{}. Cold water at \SI{20}{\kelvin} enters the large pipe at \SI{0.2}{\meter\per\second} while warm water at \SI{40}{\kelvin} enters the large pipe at \SI{0.4}{\meter\per\second}. The following calculation of the Reynolds number presents the other relevant physical parameters. The grid used was provided by the software vendor an had 26501 cell faces. At least 8 unkowns are needed (pressure, temperature, averaged velocities and velocity fluctuations. This results in about 210k unkowns which is not too large, assuming most computers have several GBs of RAM.\marginpar{c)}
 
 \begin{equation}
 Re = \frac{\rho u L}{\mu} = \frac{\SI{1000}{\kilogram\per\meter^3}\cdot\SI{0.4}{\meter\per\second}\SI{0.1}{\meter}}{\SI{8e-4}{\pascal\second}} = 50800
-\end{equation}•
+\end{equation}
 
-\subsection{c)}
-%How many unknowns. large?
+The inlet flow has a Reynolds number of 50800. For pipe flow, 2300 is usually reported as a limit for when turbulence flow occurs and hence a Turbulent model must be used. The k-$\epsilon$ model is used in this analysis.\marginpar{b)}
 
-\subsection{d)}
-%Numerical method used
+\section{Methods}
+Ansys Fluent was used for the numerical analysis. The software solves the Navie-equations Stokes (mass, momentum and energy) using Reynolds Averaging resulting in the Reynolds Averaged Navier-Stokes equations. The k-$\epsilon$ model is used to close the system with the additional unkown velocity fluctuations presented by the Reynolds averaging.\marginpar{a)}.
 
-\subsection{e)}
-% mass conservation?
+Several different method were tested.\marginpar{d)} For the discretization, first and second order upwind and third order MUSBL was tested for both momentum and energy equations. For the pressure-velocity both the SIMPLE and coupled approaches were tested.
 
-\subsection{f)}
-% T profiles for different methods
+\section{Results}
 
-\subsection{g)}
-% Impression of ansys
+Fig \ref{fig:5} shows the velocity distribution in the symmetry plane using second order upwind and SIMPLE.
+
+\begin{figure}[h]
+\includegraphics[width=0.45\textwidth]{elbow5.png}
+\includegraphics[width=0.45\textwidth]{elbow8.png}
+\caption{Velocity distribution}
+\label{fig:5}
+\end{figure}
+
+Fig. \ref{fig:6} shows the temperatur distribution. On the left is the result for the original mesh while on the left is the temperature distribution for a refined mesh based on the original temperature gradient in the coarse mesh.
+
+
+\begin{figure}
+\includegraphics[width=0.45\textwidth]{elbow5.png}
+\includegraphics[width=0.45\textwidth]{elbow-refined-mesh-T.png}
+\caption{Temperature distribution. Original mesh on left. Adaptively refined mesh on the right.}
+\label{fig:6}
+\end{figure}
+
+The goal of the mixing elbow is to mix the two flows and to assess this function the temperature profile was ploted over the outlet surface and is shown in fig. \ref{fig:10}. The temperature profiel for three different discretization methods are shown on the right in the same figure\marginpar{f)}. The dynamic (velocity) head is shown in fig \ref{fig:11}.
+
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{elbow10.png}
+\includegraphics[width=0.5\textwidth]{methods.png}
+\caption{Temperature profile across outlet. Left: Second order upwind. Right: Comparison with first order upwind and third order MUSCL.}
+\label{fig:10}
+\end{figure}
+
+To assess conservation of mass, the integrated mass flow rate $\Phi_m$ over each of the boundarie are given in the table.\marginpar{e)} The deviation from mass conservation is \SI{5.44e-6}{\kilo\gram\per\second}. The dynamic head thorugh the elbow is shown in fig. \ref{fig:11}
+
+\begin{table}[h]
+\centering
+\caption{Mass flow rates accross inlets and oultet}
+\begin{tabular}{lc}
+\toprule
+	& $\Phi_m$ (\SI{}{\kilo\gram\per\second}) \\
+\midrule
+Inlet, large & 1.6175212 \\
+Inlet small & 0.30180669 \\
+Outlet & -1.9193225 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{elbow11.png}
+\caption{Dynamic head}
+\label{fig:11}
+\end{figure}
+
+The convergence rate of SIMPLE as opposed to to the Coupled method for pressure linking was also assessed. SIMPLE converged after 83 iterations while the coupled method converged after 75 iterations. The tutorial stated that the difference should be more pronounced. The reason for this discrepancy has not been identified.
+
+\section{Conclusion}
+\marginpar{g)} ANSYS seems to have a very structure way of going through the steps needed to perform a CFD simulation. Having followed the course TEP4165 might following the instructions easier, as a general understanding of the steps needed for CFD are understood. Also, it was easier to understand all the various method names in use and what they ment (SIMPLE, Quick, Upwind, MUSCL, RANS, etc.). It would have been somewhat easier to follow the tutorial if the tutorial was mased on the version of Fluent running on farm.ntnu.no (2023 not 18). Some of the dialogue boxes look a little bit different.
+
+%\section{Task 1}
+% Figures 5,6,8,10 optional 11, 19, 12
+
+
 
 \end{document}
 
