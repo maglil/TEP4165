@@ -1,16 +1,16 @@
 module declarations
   implicit none
   private
-  double precision,public, allocatable, dimension(:) :: x,x_u,y,y_v
+  double precision,public, allocatable, dimension(:) :: x,x_u,y,y_v !grid coordinates?
   double precision,public :: xl,yl
   integer,public :: ipref,jpref
-  double precision,public, allocatable, dimension(:,:) :: u,v,pc,p,T,rho,mu,gamma,cp
+  double precision,public, allocatable, dimension(:,:) :: u,v,pc,p,T,rho,mu,gamma,cp !pc - pressure correction
   double precision,public, parameter :: pi=3.1415927
-  double precision,public :: Tamb,radius,perim,h,Tpar
-  double precision,public, allocatable, dimension(:,:) :: f_u,f_v
-  double precision,public, allocatable, dimension(:,:) :: d_u,d_v
-  double precision,public :: m_in,m_out
-  real ,public :: relax(6)
+  double precision,public :: Tamb,radius,perim,h,Tpar ! not relevant here?
+  double precision,public, allocatable, dimension(:,:) :: f_u,f_v ! convective fluxes?
+  double precision,public, allocatable, dimension(:,:) :: d_u,d_v ! Pressure correction d's
+  double precision,public :: m_in,m_out ! mass flow in out
+  real ,public :: relax(6) ! relaxation parameters
   integer,public :: iter,last,npi,npj
 end module declarations
 
@@ -26,11 +26,11 @@ use declarations
 !**** purpose: to set the number of grid points and initialize all parameters.
 !
 ! Number of grid points in each direciton:
-  npi=XXXX
-  npj=XXXX
+  npi=52
+  npj=22 ! must be even, see pressure reference
 
   allocate(u(npi,npj),v(npi,npj),p(npi,npj),pc(npi,npj),T(npi,npj),rho(npi,npj))
-  allocate(mu(npi,npj),gamma(npi,npj),cp(npi,npj),d_u(npi,npj),d_v(npi,npj))
+  allocate(mu(npi,npj),gamma(npi,npj),cp(npi,npj),d_u(npi,npj),d_v(npi,npj)) ! why not f??
 
 !
 !---- reference for zero pressure
@@ -50,17 +50,17 @@ use declarations
   v = 0.00
   p = 0.
   pc=0.  !pressure correction (equivalet to p´ in ref. 1).
-  T=XXXX !temperature 
+  T=423 !temperature, inital guess somewhere in the middle 
   d_u=0. !variable d(i,j) to calculate pc defined in 6.23
   d_v=0. !variable d(i,j) to calculate pc defined in 6.23
 
 !
 !---- set constant values
 !
-  rho=XXXX  !density
-  mu=XXXX   !dynamic viscosity 
-  gamma=XXXX!thermal conductivety
-  cp=XXXX   !specific heat - assumed constant for this problem
+  rho=800  !density
+  mu=2.168e-3   !dynamic viscosity 
+  gamma=0.145!thermal conductivety
+  cp=2010   !specific heat - assumed constant for this problem
   
 !      
 !---- setting the relaxation parameters
@@ -92,12 +92,12 @@ subroutine grid()
 !
 !---- length of the area in the x- and y direction 
 !
-  xl=XXXX
-  yl=XXXX
+  xl=100e-6
+  yl=20e-6
 !
 !---- length of volume element
 !
-  dx=xl/real(npi-2)
+  dx=xl/real(npi-2) ! include also edge points dx/2 
   dy=yl/real(npj-2)
 !
 !
@@ -149,17 +149,17 @@ implicit none
 !
 !---- fixed temperature at the upper and lower wall
 !
-  T(:,1)=XXXX   !Temperature in kelvin 
-  T(:,npj)=XXXX  
+  T(:,1)=300   !Temperature in kelvin 
+  T(:,npj)=573  
 !
 !---- fixed temperature at the left wall and the incomming fluid
 !
-  T(1,:)=XXXX
+  T(1,:)=273
 !
 !---- setting the velocity at inlet    
 !
-  u(1,2:npj-1)=XXXX 
-  u(2,2:npj-1)=XXXX
+  u(1,2:npj-1)=0.05
+  u(2,2:npj-1)=0.05
   v(1,:)=0.0
 !
 !---- setting the velocity at the upper and lower wall
