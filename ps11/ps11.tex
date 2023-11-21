@@ -11,6 +11,20 @@
 \subsection{a)}
 % Discretize momentum and energy equations. Upwind. Staggered grid notation.
 
+For the x-momentum equation, we consider a control volume that is centered on a node $i,J$
+
+We first conside the conective term
+
+\begin{equation}
+\int\partial_x (\rho u^2) dV \approx (\rho u^2 A)_e - (\rho u^2 A)_w
+\end{equation}
+
+We linearize the equation by introducing the convective flux
+
+\begin{equation}
+F = \rho u A
+\end{equation}•
+
 \subsection{b)}
 % Complete discretization with staggered grid for pressure.
 
