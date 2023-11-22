@@ -23,7 +23,97 @@ We linearize the equation by introducing the convective flux
 
 \begin{equation}
 F = \rho u A
+\end{equation}
+
+So that 
+
+\begin{equation}
+(\rho u^2 A)_e - (\rho u^2 A)_w = F_e u_e - F_w u_w
+\end{equation}
+
+The convective flux is approximated by a central average
+
+\begin{equation}
+F_e  = \oh (F_E + F_P)
+\end{equation}
+
+While $F_e u_e$ is approximated by the upwind method
+
+\begin{align}
+F_e u_e &= \oh [F_e u_P + F_e u_E  + |F_e| (u_E - u_P) ]\\
+	&= \oh [(F_e + |F_e|)u_P + (F_e - |F_e|)u_E \\
+	&= F_e^+ u_P + F_e^- u_E
+\end{align}
+
+We get similarly for $F_wu_w$
+
+\begin{equation}
+	F_wu_w = F_w^+ u_w + F_w^- u_P
+\end{equation}
+
+In summary for the convective term we get
+
+\begin{equation}
+F_e^+ u_P + F_e^- u_E -  F_w^+ u_w + F_w^- u_P
+\end{equation}
+
+For the cross term we solv it similaryl on the southern and northern faces to end up with
+
+\begin{equation}
+F_n^+ u_P + F_n^- u_N -  F_s^+ u_s + F_s^- u_P
+\end{equation}
+
+Moving on to the diffusive term
+
+\begin{equation}
+\int \partial_x \mu \partial_x u = (\mu \partial_x u)_e - (\mu \partial_x u)_w
+\end{equation}
+
+We introduce the diffusive conductance $D$
+
+\begin{equation}
+D = \frac{\mu A}{\delta x}
+\end{equation}
+
+So that we get, using a central approximation for derivative
+
+\begin{equation}
+D_e (u_E - u_P) - D_w (u_P - u_W)
+\end{equation}
+
+Any similarly for the y-diffsuions
+
+Finally for the pressure term we get
+
+\begin{equation}
+\int (-\partial_x) dV = -((pA)_e -(pA)_w) = S_u
+\end{equation}
+
+The (current) pressure is given at the faces (nodes of the scalar grid) so this can be assigned as a source term.
+
+Collecting all terms we get
+
+\begin{equation}
+a_p \phi_P = a_N \phi_E + ...
 \end{equation}•
+
+\begin{align}
+\phi_P (F_e^+ + F_w^- + F_n^+ + F_s^- - (D_e +D_w +D_n +D_s)
+\end{align}
+
+For the y-momentum equation we get similarly
+
+For scalar transport equations we get.
+
+\begin{equation}
+\int \rho T u = (ptu)_e - (\rho T u)_w A
+\end{equation}
+
+\begin{equation}
+F_eT_e - T_w T_w = source?
+\end{equation}•
+
+
 
 \subsection{b)}
 % Complete discretization with staggered grid for pressure.
@@ -31,8 +121,22 @@ F = \rho u A
 \subsection{c)}
 % Discretize boundary conditions
 
+In the Fortran code the grid is defined with scalar nodes with 2-npi-1 for interior nodes and 1 and npi for the boundary. The velocity grid thus starts at two (first being same and with right boundary at npi. There are npi-2 interior nodes for the scalar values and npi-3 for velocity
+
 \subsection{d)}
 % Fix fortran file
+
+The procedure is 
+\begin{itemize}
+\item Guess pressure.
+\item Solve momentum equation iteratively
+\item Write momentum equation for correction values
+\item Simplify
+\item Write conservation of mass with preliminary values at some points and correction at others.
+\item Solve
+\item repeat
+
+\end{itemize}
 
 \subsection{e}
 
