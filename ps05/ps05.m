@@ -1,6 +1,6 @@
 %% TEP 4280, Problem set 5
 
-set(groot, 'DefaultLineWidth', 1.5);
+%set(groot, 'DefaultLineWidth', 1.5);
 
 %% Task 1c
 clear; clc; close all
